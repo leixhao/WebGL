@@ -59,6 +59,7 @@ import { encrypt, decrypt } from "@/utils/jsencrypt";
 import useUserStore from '@/store/modules/user'
 import useAppStore from '@/store/modules/app'
 import LangSelect from "@/components/LangSelect";
+import { toRaw } from 'vue'
 
 const userStore = useUserStore()
 const router = useRouter();
@@ -103,9 +104,9 @@ function handleLogin() {
         Cookies.remove("rememberMe");
       }
       // 调用action的登录方法
-      console.log(loginForm.value)
+      console.log(toRaw(loginForm.value))
       // debugger
-      userStore.ADLogin(loginForm.value).then(() => {
+      userStore.ADlogin(loginForm.value).then(() => {
         router.push({ path: redirect.value || "/" });
       }).catch(() => {
         loading.value = false;

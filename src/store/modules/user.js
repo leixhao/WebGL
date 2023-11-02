@@ -14,13 +14,13 @@ const useUserStore = defineStore(
     }),
     actions: {
       // 登录
-      ADLogin(userInfo) {
+      ADlogin(userInfo) {
         const username = userInfo.username.trim()
         const password = userInfo.password
         const code = userInfo.code
         const appId = userInfo.appId
         return new Promise((resolve, reject) => {
-          login(username, password, code, appId).then(res => {
+          ADLogin({username, password, code, appId}).then(res => {
             let data = res.data
             setToken(data.access_token)
             this.token = data.access_token
