@@ -52,6 +52,12 @@ export function logout() {
   })
 }
 
+export function regenerate(appId) {
+  return request({
+      url: '/auth/regenerate/' + appId,
+      method: 'post',
+  })
+}
 // 获取验证码
 export function getCodeImg() {
   return request({

@@ -153,6 +153,7 @@ function getCookie() {
     rememberMe: rememberMe === undefined ? false : Boolean(rememberMe),
     appId: "73eb92cb757143a7850ed24d19f47f76"// 不同应用的appID不同
   };
+  sessionStorage.setItem('appId',loginForm.value.appId)
 }
 
 // getCode();

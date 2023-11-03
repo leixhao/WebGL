@@ -12,7 +12,8 @@ const useAppStore = defineStore(
       device: 'desktop',
       size: Cookies.get('size') || 'default',
       language: Cookies.get('tpp-language') || 'zh_CN',
-      data: {}//中英文翻译数据
+      data: {},//中英文翻译数据,
+      appId: ''
     }),
     actions: {
       toggleSideBar(withoutAnimation) {
