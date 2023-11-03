@@ -25,7 +25,8 @@ import { getAppList } from "@/api/system/aescapp";
 import { regenerate } from "@/api/login";
 import variables from "@/assets/styles/variables.module.scss";
 import useAppStore from '@/store/modules/app'
-import useSettingsStore from '@/store/modules/settings'
+import useSettingsStore from '@/store/modules/settings';
+import { ref, computed } from 'vue'
 
 const settingsStore = useSettingsStore()
 const title = ref('');
@@ -41,9 +42,10 @@ function handleSelect(value) {
       if (el.appId == value) {
         title.value = el.appAbbr;
         sessionStorage.setItem('title', el.appAbbr)
+        sessionStorage.setItem('appId', value)
       }
     });
-    window.location.href = window.location.origin + "/aesc/index";
+    window.location.href = window.location.origin + "/index";
   });
 }
 function queryAppList() {

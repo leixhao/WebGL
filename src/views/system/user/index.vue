@@ -4,79 +4,35 @@
             <!--部门数据-->
             <el-col :span="4" :xs="24">
                 <div class="head-container">
-                    <el-input
-                        v-model="deptName"
-                        placeholder="请输入部门名称"
-                        clearable
-                        prefix-icon="Search"
-                        style="margin-bottom: 20px"
-                    />
+                    <el-input v-model="deptName" placeholder="请输入部门名称" clearable prefix-icon="Search"
+                        style="margin-bottom: 20px" />
                 </div>
                 <div class="head-container">
-                    <el-tree
-                        ref="deptTreeRef"
-                        :data="deptOptions"
-                        :props="{ label: 'label', children: 'children' }"
-                        :expand-on-click-node="false"
-                        :filter-node-method="filterNode"
-                        node-key="id"
-                        highlight-current
-                        default-expand-all
-                        @nodeClick="handleNodeClick"
-                    />
+                    <el-tree ref="deptTreeRef" :data="deptOptions" :props="{ label: 'label', children: 'children' }"
+                        :expand-on-click-node="false" :filter-node-method="filterNode" node-key="id" highlight-current
+                        default-expand-all @nodeClick="handleNodeClick" />
                 </div>
             </el-col>
             <!--用户数据-->
             <el-col :span="20" :xs="24">
-                <el-form
-                    v-show="showSearch"
-                    ref="queryRef"
-                    :model="queryParams"
-                    :inline="true"
-                    label-width="68px"
-                >
+                <el-form v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true" label-width="68px">
                     <el-form-item label="用户名称" prop="userName">
-                        <el-input
-                            v-model="queryParams.userName"
-                            placeholder="请输入用户名称"
-                            clearable
-                            style="width: 240px"
-                            @keyup.enter="handleQuery"
-                        />
+                        <el-input v-model="queryParams.userName" placeholder="请输入用户名称" clearable style="width: 240px"
+                            @keyup.enter="handleQuery" />
                     </el-form-item>
                     <el-form-item label="手机号码" prop="phonenumber">
-                        <el-input
-                            v-model="queryParams.phonenumber"
-                            placeholder="请输入手机号码"
-                            clearable
-                            style="width: 240px"
-                            @keyup.enter="handleQuery"
-                        />
+                        <el-input v-model="queryParams.phonenumber" placeholder="请输入手机号码" clearable style="width: 240px"
+                            @keyup.enter="handleQuery" />
                     </el-form-item>
                     <el-form-item label="状态" prop="status">
-                        <el-select
-                            v-model="queryParams.status"
-                            placeholder="用户状态"
-                            clearable
-                            style="width: 240px"
-                        >
-                            <el-option
-                                v-for="dict in sys_normal_disable"
-                                :key="dict.value"
-                                :label="dict.label"
-                                :value="dict.value"
-                            />
+                        <el-select v-model="queryParams.status" placeholder="用户状态" clearable style="width: 240px">
+                            <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label"
+                                :value="dict.value" />
                         </el-select>
                     </el-form-item>
                     <el-form-item label="创建时间" style="width: 308px">
-                        <el-date-picker
-                            v-model="dateRange"
-                            value-format="YYYY-MM-DD"
-                            type="daterange"
-                            range-separator="-"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期"
-                        ></el-date-picker>
+                        <el-date-picker v-model="dateRange" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
+                            start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -86,179 +42,73 @@
 
                 <el-row :gutter="10" class="mb8">
                     <el-col :span="1.5">
-                        <el-button
-                            v-hasPermi="['system:user:add']"
-                            type="primary"
-                            plain
-                            icon="Plus"
-                            @click="handleAdd"
-                            >新增</el-button
-                        >
+                        <el-button v-hasPermi="['system:user:add']" type="primary" plain icon="Plus"
+                            @click="handleAdd">新增</el-button>
                     </el-col>
                     <el-col :span="1.5">
-                        <el-button
-                            v-hasPermi="['system:user:edit']"
-                            type="success"
-                            plain
-                            icon="Edit"
-                            :disabled="single"
-                            @click="handleUpdate"
-                            >修改</el-button
-                        >
+                        <el-button v-hasPermi="['system:user:edit']" type="success" plain icon="Edit" :disabled="single"
+                            @click="handleUpdate">修改</el-button>
                     </el-col>
                     <el-col :span="1.5">
-                        <el-button
-                            v-hasPermi="['system:user:remove']"
-                            type="danger"
-                            plain
-                            icon="Delete"
-                            :disabled="multiple"
-                            @click="handleDelete"
-                            >删除</el-button
-                        >
+                        <el-button v-hasPermi="['system:user:remove']" type="danger" plain icon="Delete"
+                            :disabled="multiple" @click="handleDelete">删除</el-button>
                     </el-col>
                     <el-col :span="1.5">
-                        <el-button
-                            v-hasPermi="['system:user:import']"
-                            type="info"
-                            plain
-                            icon="Upload"
-                            @click="handleImport"
-                            >导入</el-button
-                        >
+                        <el-button v-hasPermi="['system:user:import']" type="info" plain icon="Upload"
+                            @click="handleImport">导入</el-button>
                     </el-col>
                     <el-col :span="1.5">
-                        <el-button
-                            v-hasPermi="['system:user:export']"
-                            type="warning"
-                            plain
-                            icon="Download"
-                            @click="handleExport"
-                            >导出</el-button
-                        >
+                        <el-button v-hasPermi="['system:user:export']" type="warning" plain icon="Download"
+                            @click="handleExport">导出</el-button>
                     </el-col>
-                    <right-toolbar
-                        v-model:showSearch="showSearch"
-                        :columns="columns"
-                        @queryTable="getList"
-                    ></right-toolbar>
+                    <right-toolbar v-model:showSearch="showSearch" :columns="columns" @queryTable="getList"></right-toolbar>
                 </el-row>
 
                 <el-table v-loading="loading" :data="userList" @selectionChange="handleSelectionChange">
                     <el-table-column type="selection" width="50" align="center" />
-                    <el-table-column
-                        v-if="columns[0].visible"
-                        key="userId"
-                        label="用户编号"
-                        align="center"
-                        prop="userId"
-                    />
-                    <el-table-column
-                        v-if="columns[1].visible"
-                        key="userName"
-                        label="用户名称"
-                        align="center"
-                        prop="userName"
-                        :show-overflow-tooltip="true"
-                    />
-                    <el-table-column
-                        v-if="columns[2].visible"
-                        key="nickName"
-                        label="用户昵称"
-                        align="center"
-                        prop="nickName"
-                        :show-overflow-tooltip="true"
-                    />
-                    <el-table-column
-                        v-if="columns[3].visible"
-                        key="deptName"
-                        label="部门"
-                        align="center"
-                        prop="dept.deptName"
-                        :show-overflow-tooltip="true"
-                    />
-                    <el-table-column
-                        v-if="columns[4].visible"
-                        key="phonenumber"
-                        label="手机号码"
-                        align="center"
-                        prop="phonenumber"
-                        width="120"
-                    />
+                    <el-table-column v-if="columns[0].visible" key="userId" label="用户编号" align="center" prop="userId" />
+                    <el-table-column v-if="columns[1].visible" key="userName" label="用户名称" align="center" prop="userName"
+                        :show-overflow-tooltip="true" />
+                    <el-table-column v-if="columns[2].visible" key="nickName" label="用户昵称" align="center" prop="nickName"
+                        :show-overflow-tooltip="true" />
+                    <el-table-column v-if="columns[3].visible" key="deptName" label="部门" align="center" prop="dept.deptName"
+                        :show-overflow-tooltip="true" />
+                    <el-table-column v-if="columns[4].visible" key="phonenumber" label="手机号码" align="center"
+                        prop="phonenumber" width="120" />
                     <el-table-column v-if="columns[5].visible" key="status" label="状态" align="center">
                         <template #default="scope">
-                            <el-switch
-                                v-model="scope.row.status"
-                                active-value="0"
-                                inactive-value="1"
-                                @change="handleStatusChange(scope.row)"
-                            ></el-switch>
+                            <el-switch v-model="scope.row.status" active-value="0" inactive-value="1"
+                                @change="handleStatusChange(scope.row)"></el-switch>
                         </template>
                     </el-table-column>
-                    <el-table-column
-                        v-if="columns[6].visible"
-                        label="创建时间"
-                        align="center"
-                        prop="createTime"
-                        width="160"
-                    >
+                    <el-table-column v-if="columns[6].visible" label="创建时间" align="center" prop="createTime" width="160">
                         <template #default="scope">
                             <span>{{ parseTime(scope.row.createTime) }}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column
-                        label="操作"
-                        align="center"
-                        width="150"
-                        class-name="small-padding fixed-width"
-                    >
+                    <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
                         <template #default="scope">
                             <el-tooltip v-if="scope.row.userId !== 1" content="修改" placement="top">
-                                <el-button
-                                    v-hasPermi="['system:user:edit']"
-                                    link
-                                    type="primary"
-                                    icon="Edit"
-                                    @click="handleUpdate(scope.row)"
-                                ></el-button>
+                                <el-button v-hasPermi="['system:user:edit']" link type="primary" icon="Edit"
+                                    @click="handleUpdate(scope.row)"></el-button>
                             </el-tooltip>
                             <el-tooltip v-if="scope.row.userId !== 1" content="删除" placement="top">
-                                <el-button
-                                    v-hasPermi="['system:user:remove']"
-                                    link
-                                    type="primary"
-                                    icon="Delete"
-                                    @click="handleDelete(scope.row)"
-                                ></el-button>
+                                <el-button v-hasPermi="['system:user:remove']" link type="primary" icon="Delete"
+                                    @click="handleDelete(scope.row)"></el-button>
                             </el-tooltip>
                             <el-tooltip v-if="scope.row.userId !== 1" content="重置密码" placement="top">
-                                <el-button
-                                    v-hasPermi="['system:user:resetPwd']"
-                                    link
-                                    type="primary"
-                                    icon="Key"
-                                    @click="handleResetPwd(scope.row)"
-                                ></el-button>
+                                <el-button v-hasPermi="['system:user:resetPwd']" link type="primary" icon="Key"
+                                    @click="handleResetPwd(scope.row)"></el-button>
                             </el-tooltip>
                             <el-tooltip v-if="scope.row.userId !== 1" content="分配角色" placement="top">
-                                <el-button
-                                    v-hasPermi="['system:user:edit']"
-                                    link
-                                    type="primary"
-                                    icon="CircleCheck"
-                                    @click="handleAuthRole(scope.row)"
-                                ></el-button>
+                                <el-button v-hasPermi="['system:user:edit']" link type="primary" icon="CircleCheck"
+                                    @click="handleAuthRole(scope.row)"></el-button>
                             </el-tooltip>
                         </template>
                     </el-table-column>
                 </el-table>
-                <pagination
-                    v-show="total > 0"
-                    v-model:page="queryParams.pageNum"
-                    v-model:limit="queryParams.pageSize"
-                    :total="total"
-                    @pagination="getList"
-                />
+                <pagination v-show="total > 0" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize"
+                    :total="total" @pagination="getList" />
             </el-col>
         </el-row>
 
@@ -273,25 +123,16 @@
                     </el-col>
                     <el-col :span="12">
                         <el-form-item label="归属部门" prop="deptId">
-                            <el-tree-select
-                                v-model="form.deptId"
-                                :data="deptOptions"
-                                :props="{ value: 'id', label: 'label', children: 'children' }"
-                                value-key="id"
-                                placeholder="请选择归属部门"
-                                check-strictly
-                            />
+                            <el-tree-select v-model="form.deptId" :data="deptOptions"
+                                :props="{ value: 'id', label: 'label', children: 'children' }" value-key="id"
+                                placeholder="请选择归属部门" check-strictly />
                         </el-form-item>
                     </el-col>
                 </el-row>
                 <el-row>
                     <el-col :span="12">
                         <el-form-item label="手机号码" prop="phonenumber">
-                            <el-input
-                                v-model="form.phonenumber"
-                                placeholder="请输入手机号码"
-                                maxlength="11"
-                            />
+                            <el-input v-model="form.phonenumber" placeholder="请输入手机号码" maxlength="11" />
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
@@ -308,13 +149,8 @@
                     </el-col>
                     <el-col :span="12">
                         <el-form-item v-if="form.userId == undefined" label="用户密码" prop="password">
-                            <el-input
-                                v-model="form.password"
-                                placeholder="请输入用户密码"
-                                type="password"
-                                maxlength="20"
-                                show-password
-                            />
+                            <el-input v-model="form.password" placeholder="请输入用户密码" type="password" maxlength="20"
+                                show-password />
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -322,24 +158,16 @@
                     <el-col :span="12">
                         <el-form-item label="用户性别">
                             <el-select v-model="form.sex" placeholder="请选择">
-                                <el-option
-                                    v-for="dict in sys_user_sex"
-                                    :key="dict.value"
-                                    :label="dict.label"
-                                    :value="dict.value"
-                                ></el-option>
+                                <el-option v-for="dict in sys_user_sex" :key="dict.value" :label="dict.label"
+                                    :value="dict.value"></el-option>
                             </el-select>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
                         <el-form-item label="状态">
                             <el-radio-group v-model="form.status">
-                                <el-radio
-                                    v-for="dict in sys_normal_disable"
-                                    :key="dict.value"
-                                    :label="dict.value"
-                                    >{{ dict.label }}</el-radio
-                                >
+                                <el-radio v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.value">{{
+                                    dict.label }}</el-radio>
                             </el-radio-group>
                         </el-form-item>
                     </el-col>
@@ -348,26 +176,16 @@
                     <el-col :span="12">
                         <el-form-item label="岗位">
                             <el-select v-model="form.postIds" multiple placeholder="请选择">
-                                <el-option
-                                    v-for="item in postOptions"
-                                    :key="item.postId"
-                                    :label="item.postName"
-                                    :value="item.postId"
-                                    :disabled="item.status == 1"
-                                ></el-option>
+                                <el-option v-for="item in postOptions" :key="item.postId" :label="item.postName"
+                                    :value="item.postId" :disabled="item.status == 1"></el-option>
                             </el-select>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
                         <el-form-item label="角色">
                             <el-select v-model="form.roleIds" multiple placeholder="请选择">
-                                <el-option
-                                    v-for="item in roleOptions"
-                                    :key="item.roleId"
-                                    :label="item.roleName"
-                                    :value="item.roleId"
-                                    :disabled="item.status == 1"
-                                ></el-option>
+                                <el-option v-for="item in roleOptions" :key="item.roleId" :label="item.roleName"
+                                    :value="item.roleId" :disabled="item.status == 1"></el-option>
                             </el-select>
                         </el-form-item>
                     </el-col>
@@ -375,11 +193,7 @@
                 <el-row>
                     <el-col :span="24">
                         <el-form-item label="备注">
-                            <el-input
-                                v-model="form.remark"
-                                type="textarea"
-                                placeholder="请输入内容"
-                            ></el-input>
+                            <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -394,18 +208,9 @@
 
         <!-- 用户导入对话框 -->
         <el-dialog v-model="upload.open" :title="upload.title" width="400px" append-to-body>
-            <el-upload
-                ref="uploadRef"
-                :limit="1"
-                accept=".xlsx, .xls"
-                :headers="upload.headers"
-                :action="upload.url + '?updateSupport=' + upload.updateSupport"
-                :disabled="upload.isUploading"
-                :on-progress="handleFileUploadProgress"
-                :on-success="handleFileSuccess"
-                :auto-upload="false"
-                drag
-            >
+            <el-upload ref="uploadRef" :limit="1" accept=".xlsx, .xls" :headers="upload.headers"
+                :action="upload.url + '?updateSupport=' + upload.updateSupport" :disabled="upload.isUploading"
+                :on-progress="handleFileUploadProgress" :on-success="handleFileSuccess" :auto-upload="false" drag>
                 <el-icon class="el-icon--upload"><upload-filled /></el-icon>
                 <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
                 <template #tip>
@@ -414,13 +219,8 @@
                             <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的用户数据
                         </div>
                         <span>仅允许导入xls、xlsx格式文件。</span>
-                        <el-link
-                            type="primary"
-                            :underline="false"
-                            style="font-size: 12px; vertical-align: baseline"
-                            @click="importTemplate"
-                            >下载模板</el-link
-                        >
+                        <el-link type="primary" :underline="false" style="font-size: 12px; vertical-align: baseline"
+                            @click="importTemplate">下载模板</el-link>
                     </div>
                 </template>
             </el-upload>
@@ -677,8 +477,8 @@ const handleFileSuccess = (response: any, file: any, fileList: any) => {
     (proxy?.$refs['uploadRef'] as any).handleRemove(file);
     (proxy as any).$alert(
         "<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" +
-            response.msg +
-            '</div>',
+        response.msg +
+        '</div>',
         '导入结果',
         { dangerouslyUseHTMLString: true }
     );

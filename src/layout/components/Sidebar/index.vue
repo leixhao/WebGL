@@ -1,31 +1,15 @@
 <template>
-    <div
-        :class="{ 'has-logo': showLogo }"
-        :style="{
-            backgroundColor:
-                sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground,
-        }"
-    >
+    <div :class="{ 'has-logo': showLogo }" :style="{
+        backgroundColor:
+            sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground,
+    }">
         <logo v-if="showLogo" :collapse="isCollapse" />
         <el-scrollbar :class="sideTheme" wrap-class="scrollbar-wrapper">
-            <el-menu
-                :default-active="activeMenu"
-                :collapse="isCollapse"
-                :background-color="
-                    sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground
-                "
-                :text-color="sideTheme === 'theme-dark' ? variables.menuColor : variables.menuLightColor"
-                :unique-opened="true"
-                :active-text-color="theme"
-                :collapse-transition="false"
-                mode="vertical"
-            >
-                <sidebar-item
-                    v-for="(routeItem, index) in sidebarRouters"
-                    :key="routeItem.path + index"
-                    :item="routeItem"
-                    :base-path="routeItem.path"
-                />
+            <el-menu :default-active="activeMenu" :collapse="isCollapse" :background-color="sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground
+                " :text-color="sideTheme === 'theme-dark' ? variables.menuColor : variables.menuLightColor"
+                :unique-opened="true" :active-text-color="theme" :collapse-transition="false" mode="vertical">
+                <sidebar-item v-for="(routeItem, index) in sidebarRouters" :key="routeItem.path + index" :item="routeItem"
+                    :base-path="routeItem.path" />
             </el-menu>
         </el-scrollbar>
     </div>
