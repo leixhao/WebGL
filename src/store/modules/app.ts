@@ -10,6 +10,7 @@ const useAppStore = defineStore('app', {
         },
         device: 'desktop',
         size: Cookies.get('size') || 'default',
+        appId: ''
     }),
     actions: {
         toggleSideBar(withoutAnimation?: boolean) {

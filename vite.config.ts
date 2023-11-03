@@ -4,7 +4,7 @@ import path from 'path';
 
 export default defineConfig(({ mode, command }) => {
     const env = loadEnv(mode, process.cwd());
-    const { VITE_APP_ENV } = env;
+    const { VITE_APP_ENV, VITE_APP_BASE_API } = env;
     return {
         plugins: createVitePlugins(env, command === 'build'),
         // 部署生产环境和开发环境下的URL。
@@ -16,16 +16,17 @@ export default defineConfig(({ mode, command }) => {
             host: true,
             open: true,
             proxy: {
-                [process.env.VUE_APP_BASE_API]: {
+                [VITE_APP_BASE_API]: {
                     target: `http://tech-d.envision-aesc.cn`,
                     //  http://tech-d.envision-aesc.cn/api 开发环境
                     //http://tech-q.envision-aesc.cn/api 测试环境
                     //http://tech.envision-aesc.cn/api 生产环境
                     changeOrigin: true,
-                    pathRewrite: {
-                      ['^' + process.env.VUE_APP_BASE_API]: '/api'
-                    }
-                  }
+                    rewrite: (p) => p.replace(/^\/[VITE_APP_BASE_API:]/, '/api'),
+                    // pathRewrite: {
+                    //     ['^' + process.env.VUE_APP_BASE_API]: '/api'
+                    // }
+                }
             },
         },
         resolve: {

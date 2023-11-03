@@ -60,10 +60,10 @@ import TreeSelect from '@/components/TreeSelect/index.vue';
 import DictTag from '@/components/DictTag/index.vue';
 
 const app = createApp(App);
-const {t} = useI18n();
+// const {t} = useI18n();
 
 // 全局方法挂载
-app.config.globalProperties.$t = t;
+// app.config.globalProperties.$t = t;
 app.config.globalProperties.useDict = useDict;
 app.config.globalProperties.download = download;
 app.config.globalProperties.parseTime = parseTime;
