@@ -1,15 +1,16 @@
 <template>
-  <router-view />
+    <router-view />
 </template>
 
-<script setup>
-import useSettingsStore from '@/store/modules/settings'
-import { handleThemeStyle } from '@/utils/theme'
+<script setup lang="ts">
+import useSettingsStore from '@/store/modules/settings';
+import { handleThemeStyle } from '@/utils/theme';
+import { nextTick, onMounted } from 'vue';
 
 onMounted(() => {
-  nextTick(() => {
-    // ³õÊ¼»¯Ö÷ÌâÑùÊ½
-    handleThemeStyle(useSettingsStore().theme)
-  })
-})
+    nextTick(() => {
+        // åˆå§‹åŒ–ä¸»é¢˜æ ·å¼
+        handleThemeStyle(useSettingsStore().theme);
+    });
+});
 </script>
