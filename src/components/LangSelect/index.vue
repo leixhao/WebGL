@@ -2,30 +2,37 @@
   <el-dropdown trigger="click" class="international" @command="handleSetLanguage">
     <div>
       <svg-icon class-name="international-icon" icon-class="language" />
-      <span class="lanTitle">{{ userStore.data }}</span>
     </div>
-    <el-dropdown-menu>
-      <template #dropdown>
-        <el-dropdown-item :disabled="userStore.language === 'zh_CN'" command="zh_CN">
+    <template #dropdown>
+      <el-dropdown-menu>
+        <el-dropdown-item :disabled="language === 'zh'" command="zh">
           简体中文
         </el-dropdown-item>
-        <el-dropdown-item :disabled="userStore.language === 'en_US'" command="en_US">
+        <el-dropdown-item :disabled="language === 'en'" command="en">
           ENGLISH
         </el-dropdown-item>
-      </template>
-    </el-dropdown-menu>
+      </el-dropdown-menu>
+    </template>
   </el-dropdown>
 </template>
 
 <script setup name="LangSelect">
-import useUserStore from '@/store/modules/user'
-const userStore = useUserStore();
+import useAppStore from '@/store/modules/app'
+import { useI18n } from 'vue-i18n';
+import { ElMessage } from 'element-plus'
+import { toRefs } from 'vue'
+
+const appStore = useAppStore();
+const { language }  = toRefs(appStore)
+
+const { t, locale } = useI18n();
 
 const handleSetLanguage = (lang) => {
-  this.$i18n.locale = lang
-  userStore().setTranslate(lang)
-  this.$message({
-    message: this.$t('app.langchanged'), //'设置语言成功',
+  locale.value = lang;
+  appStore.setLanguage(lang)
+
+  ElMessage({
+    message: t('app.langchanged'), //'设置语言成功',
     type: 'success'
   })
 }
@@ -39,7 +46,7 @@ const handleSetLanguage = (lang) => {
 
   .international-icon {
     vertical-align: -4px;
-    margin: 10px 0 0 22px;
+    margin: 0px 0 0px 2px;
   }
 
   .lanTitle {

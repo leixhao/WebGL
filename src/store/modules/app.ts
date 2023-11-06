@@ -9,6 +9,7 @@ const useAppStore = defineStore('app', {
             hide: false,
         },
         device: 'desktop',
+        language: Cookies.get('language') || 'en',
         size: Cookies.get('size') || 'default',
         appId: ''
     }),
@@ -36,6 +37,10 @@ const useAppStore = defineStore('app', {
         setSize(size: string) {
             this.size = size;
             Cookies.set('size', size);
+        },
+        setLanguage(lang: string) {
+            this.language = lang;
+            Cookies.set('language', lang)
         },
         toggleSideBarHide(status: boolean) {
             this.sidebar.hide = status;

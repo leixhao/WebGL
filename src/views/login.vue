@@ -2,48 +2,38 @@
   <div class="login">
     <el-form ref="loginRef" :model="loginForm" :rules="loginRules" class="login-form">
       <h3 class="title">
-        {{ $t("login.title") }}
+        {{ t("login.title") }}
 
         <el-tooltip content="语言选择" effect="dark" placement="bottom">
           <lang-select class="right-menu-item hover-effect" />
         </el-tooltip>
       </h3>
-      <!-- 选择登录方式 -->
-      <el-tabs type="card" class="ta-c">
-        <el-tab-pane :label="$t('login.QR_Code')">
-          <!-- 二维码登录  -->
-          <div style="width: 300px; height: 400px; margin: auto" id="weChat_div"></div>
-        </el-tab-pane>
-        <el-tab-pane :label="$t('login.Account_Assword')">
-          <div>
-            <!-- 账号密码登录 -->
-            <el-form-item prop="username">
-              <el-input v-model="loginForm.username" type="text" auto-complete="off" :placeholder="$t('login.username')">
-                <template #prefix>
-                  <svg-icon icon-class="user" class="el-input__icon input-icon" />
-                </template>
-              </el-input>
-            </el-form-item>
-            <el-form-item prop="password">
-              <el-input v-model="loginForm.password" type="password" auto-complete="off"
-                :placeholder="$t('login.password')" @keyup.enter="handleLogin">
-                <template #prefix>
-                  <svg-icon icon-class="password" class="el-input__icon input-icon" />
-                </template>
-              </el-input>
-            </el-form-item>
-            <el-checkbox v-model="loginForm.rememberMe" style="margin: 0px 0px 25px 0px">{{ $t("login.remember")
-            }}</el-checkbox>
-            <el-form-item style="width: 100%">
-              <el-button :loading="loading" size="default" type="primary" style="width: 100%"
-                @click.prevent="handleLogin">
-                <span v-if="!loading">{{ $t("login.logIn") }}</span>
-                <span v-else>{{ $t("login.logining") }}</span>
-              </el-button>
-            </el-form-item>
-          </div>
-        </el-tab-pane>
-      </el-tabs>
+      <div>
+        <!-- 账号密码登录 -->
+        <el-form-item prop="username">
+          <el-input v-model="loginForm.username" type="text" auto-complete="off" :placeholder="t('login.username')">
+            <template #prefix>
+              <svg-icon icon-class="user" class="el-input__icon input-icon" />
+            </template>
+          </el-input>
+        </el-form-item>
+        <el-form-item prop="password">
+          <el-input v-model="loginForm.password" type="password" auto-complete="off" :placeholder="t('login.password')"
+            @keyup.enter="handleLogin">
+            <template #prefix>
+              <svg-icon icon-class="password" class="el-input__icon input-icon" />
+            </template>
+          </el-input>
+        </el-form-item>
+        <el-checkbox v-model="loginForm.rememberMe" style="margin: 0px 0px 25px 0px">{{ t("login.remember")
+        }}</el-checkbox>
+        <el-form-item style="width: 100%">
+          <el-button :loading="loading" size="default" type="primary" style="width: 100%" @click.prevent="handleLogin">
+            <span v-if="!loading">{{ t("login.logIn") }}</span>
+            <span v-else>{{ t("login.logining") }}</span>
+          </el-button>
+        </el-form-item>
+      </div>
     </el-form>
 
     <!--  底部  -->
@@ -62,7 +52,8 @@ import useAppStore from '@/store/modules/app'
 import { toRaw, ref, getCurrentInstance } from 'vue'
 import { useRouter } from 'vue-router';
 // import { FormInstance } from 'element-plus';
-
+import { useI18n } from "vue-i18n";
+const { t } = useI18n()
 
 const userStore = useUserStore()
 const router = useRouter();
@@ -156,7 +147,7 @@ function getCookie() {
     rememberMe: rememberMe === undefined ? false : Boolean(rememberMe),
     appId: "73eb92cb757143a7850ed24d19f47f76"// 不同应用的appID不同
   };
-  sessionStorage.setItem('appId',loginForm.value.appId)
+  sessionStorage.setItem('appId', loginForm.value.appId)
 }
 
 // getCode();

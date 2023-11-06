@@ -23,6 +23,7 @@ const i18n = createI18n({
   locale: Cookies.get('language') || 'en',
   // 设置文本内容
   messages,
+  legacy: false,
   silentTranslationWarn: true
 })
 

@@ -7,7 +7,7 @@
                     <el-input v-model="deptName" placeholder="请输入部门名称" clearable prefix-icon="Search"
                         style="margin-bottom: 20px" />
                 </div>
-                <div class="head-container">
+                <div class="left-container">
                     <el-tree ref="deptTreeRef" :data="deptOptions" :props="{ label: 'label', children: 'children' }"
                         :expand-on-click-node="false" :filter-node-method="filterNode" node-key="id" highlight-current
                         default-expand-all @nodeClick="handleNodeClick" />
@@ -357,7 +357,12 @@ function getList() {
 }
 /** 节点单击事件 */
 function handleNodeClick(data: any) {
-    queryParams.value.deptId = data.id;
+    if (queryParams.value.deptId == data.id) {
+        queryParams.value.deptId = undefined;
+        deptTreeRef.value?.setCurrentKey(null as any)
+    } else {
+        queryParams.value.deptId = data.id;
+    }
     handleQuery();
 }
 /** 搜索按钮操作 */
@@ -561,3 +566,11 @@ function submitForm() {
 getDeptTree();
 getList();
 </script>
+<style lang="scss" scoped>
+.left-container {
+    border-right: 1px solid #ccc;
+    padding-right: 20px;
+    height: 800px;
+    overflow-y: scroll;
+}
+</style>

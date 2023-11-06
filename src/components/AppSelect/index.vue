@@ -13,10 +13,10 @@
           </el-dropdown-item>
         </el-dropdown-menu>
       </template>
+      <el-icon color="#606266" :size="15" style="vertical-align: middle;cursor: pointer;">
+        <CaretBottom />
+      </el-icon>
     </el-dropdown>
-    <el-icon color="#606266" :size="15" style="vertical-align: middle;">
-      <CaretBottom />
-    </el-icon>
   </div>
 </template>
 
@@ -36,7 +36,6 @@ const from = ref({
 })
 const sideTheme = computed(() => settingsStore.sideTheme);
 function handleSelect(value) {
-  console.log(value)
   regenerate(value).then((response) => {
     appList.value.forEach((el) => {
       if (el.appId == value) {
@@ -51,7 +50,6 @@ function handleSelect(value) {
 function queryAppList() {
   appList.value = []; //任务大类字典
   getAppList().then((response) => {
-    console.log(response)
     appList.value = response.data;
     let val = sessionStorage.getItem('appId');
     title.value = sessionStorage.getItem('title') || appList.value.find(item => item.appId == val).appAbbr

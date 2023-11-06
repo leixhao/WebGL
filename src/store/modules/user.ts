@@ -37,7 +37,7 @@ const useUserStore = defineStore('user', {
                     });
             });
         },
-        ADlogin(userInfo: { appId:string; code:string; username:string; password:string }) {
+        ADlogin(userInfo: { appId: string; code: string; username: string; password: string }) {
             const obj = {
                 appId: userInfo.appId.trim(),
                 code: '',

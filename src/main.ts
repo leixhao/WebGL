@@ -58,9 +58,8 @@ import ImagePreview from '@/components/ImagePreview/index.vue';
 import TreeSelect from '@/components/TreeSelect/index.vue';
 // 字典标签组件
 import DictTag from '@/components/DictTag/index.vue';
-
 const app = createApp(App);
-// const {t} = useI18n();
+// const { t } = i18n.global;
 
 // 全局方法挂载
 // app.config.globalProperties.$t = t;

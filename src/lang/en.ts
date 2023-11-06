@@ -1,5 +1,8 @@
 export default {
     home: "首页",
+    app: {
+      langchanged: 'Language changed',
+    },
     global: {
         //路由语言配置 start
         router: {

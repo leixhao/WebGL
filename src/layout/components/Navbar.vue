@@ -1,11 +1,7 @@
 <template>
     <div class="navbar">
-        <hamburger
-            id="hamburger-container"
-            :is-active="appStore.sidebar.opened"
-            class="hamburger-container"
-            @toggleClick="toggleSideBar"
-        />
+        <hamburger id="hamburger-container" :is-active="appStore.sidebar.opened" class="hamburger-container"
+            @toggleClick="toggleSideBar" />
         <breadcrumb id="breadcrumb-container" class="breadcrumb-container" v-if="!settingsStore.topNav" />
         <top-nav id="topmenu-container" class="topmenu-container" v-if="settingsStore.topNav" />
 
@@ -13,18 +9,21 @@
             <template v-if="appStore.device !== 'mobile'">
                 <header-search id="header-search" class="right-menu-item" />
 
-                <el-tooltip content="源码地址" effect="dark" placement="bottom">
+                <!-- <el-tooltip content="源码地址" effect="dark" placement="bottom">
                     <ruo-yi-git id="ruoyi-git" class="right-menu-item hover-effect" />
                 </el-tooltip>
 
                 <el-tooltip content="文档地址" effect="dark" placement="bottom">
                     <ruo-yi-doc id="ruoyi-doc" class="right-menu-item hover-effect" />
-                </el-tooltip>
+                </el-tooltip> -->
 
                 <screenfull id="screenfull" class="right-menu-item hover-effect" />
 
                 <el-tooltip content="布局大小" effect="dark" placement="bottom">
                     <size-select id="size-select" class="right-menu-item hover-effect" />
+                </el-tooltip>
+                <el-tooltip content="设置语言" effect="dark" placement="bottom">
+                    <lang-select class="right-menu-item hover-effect" style="line-height: 47px;font-size: 18px !important;" />
                 </el-tooltip>
             </template>
             <div class="avatar-container">
@@ -60,6 +59,7 @@ import Hamburger from '@/components/Hamburger/index.vue';
 import Screenfull from '@/components/Screenfull/index.vue';
 import SizeSelect from '@/components/SizeSelect/index.vue';
 import HeaderSearch from '@/components/HeaderSearch/index.vue';
+import LangSelect from "@/components/LangSelect/index.vue";
 import RuoYiGit from '@/components/RuoYi/Git/index.vue';
 import RuoYiDoc from '@/components/RuoYi/Doc/index.vue';
 import useAppStore from '@/store/modules/app';
@@ -98,7 +98,7 @@ function logout() {
                 location.href = '/index';
             });
         })
-        // .catch(() => {});
+    // .catch(() => {});
 }
 
 const emits = defineEmits(['setLayout']);
