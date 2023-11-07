@@ -102,6 +102,17 @@ export const constantRoutes: RouteRecordRaw[] = [
             },
         ],
     },
+    {
+        path: '/system',
+        component: Layout,
+        hidden: true,
+        children: [{
+            path: 'aescapp/index',
+            component: () => import('@/views/system/aescapp/index.vue'),
+            name: 'aescapp',
+            meta: { title: '应用管理', icon: '' }
+        },]
+    },
 ];
 
 // 动态路由，基于用户权限动态去加载

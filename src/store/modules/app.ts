@@ -9,7 +9,7 @@ const useAppStore = defineStore('app', {
             hide: false,
         },
         device: 'desktop',
-        language: Cookies.get('language') || 'en',
+        language: Cookies.get('language') || 'zh',
         size: Cookies.get('size') || 'default',
         appId: ''
     }),

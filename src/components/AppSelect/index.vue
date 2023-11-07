@@ -5,6 +5,9 @@
         color: variables.sidebarTitle,
       }">
         {{ title }}
+        <el-icon color="#606266" :size="15">
+          <CaretBottom />
+        </el-icon>
       </span>
       <template #dropdown>
         <el-dropdown-menu>
@@ -13,9 +16,6 @@
           </el-dropdown-item>
         </el-dropdown-menu>
       </template>
-      <el-icon color="#606266" :size="15" style="vertical-align: middle;cursor: pointer;">
-        <CaretBottom />
-      </el-icon>
     </el-dropdown>
   </div>
 </template>
