@@ -10,9 +10,9 @@
         />
       </el-form-item> -->
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="small" @click="handleQuery">{{ t("button.search")
+        <el-button type="primary" icon="Search" size="small" @click="handleQuery">{{ t("button.search")
         }}</el-button>
-        <el-button icon="el-icon-refresh" size="small" @click="resetQuery">{{
+        <el-button icon="Refresh" size="small" @click="resetQuery">{{
           t("button.reset")
         }}</el-button>
       </el-form-item>
@@ -30,7 +30,7 @@
           >{{ t("button.new") }}</el-button
         > -->
 
-        <el-button type="primary" plain icon="el-icon-plus" size="small" @click="handleAdd">{{ t("button.new")
+        <el-button type="primary" plain icon="Plus" size="small" @click="handleAdd">{{ t("button.new")
         }}</el-button>
       </el-col>
 
@@ -89,9 +89,10 @@
       </el-table-column>
       <el-table-column :label="t('public.action')" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button size="small" type="primary" link icon="el-icon-edit" @click="handleUpdate(scope.row)">{{ t("button.edit")
+          <el-button size="small" type="primary" link icon="Edit" @click="handleUpdate(scope.row)">{{ t("button.edit")
           }}</el-button>
-          <el-button size="small" type="primary" link @click="getSecretInfo(scope.row)">{{ t("button.sendSecret") }}</el-button>
+          <el-button size="small" type="primary" link @click="getSecretInfo(scope.row)">{{ t("button.sendSecret")
+          }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -105,7 +106,7 @@
     /> -->
 
     <!-- 维护任务信息 -->
-    <aescAppForm ref="aescAppForm" :aescapp="form" :visible="aescAppFormBox" @cancel="aescAppFormBox = false"
+    <aescAppForm ref="aescForm" :aescapp="form" :visible="aescAppFormBox" @cancel="aescAppFormBox = false"
       @saveclose="closeAescAppForm" :key="'aescAppForm' + new Date()">
     </aescAppForm>
   </div>
@@ -116,9 +117,9 @@
 
 <script setup lang="ts">
 import { remove, getAppList, getSecret } from "@/api/system/aescapp";
-// import aescAppForm from "@/views/system/aescapp/aescAppForm";
+import aescAppForm from "@/views/system/aescapp/aescAppForm.vue";
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getCurrentInstance, ComponentInternalInstance, ref, reactive, toRefs } from 'vue';
+import { getCurrentInstance, ComponentInternalInstance, ref, reactive, toRefs, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useI18n } from "vue-i18n";
 const { t } = useI18n()
@@ -235,6 +236,7 @@ function handleAdd() {
 }
 /** 修改按钮操作 */
 function handleUpdate(row: any) {
+  console.log(row)
   form.value = row;
   aescAppFormBox.value = true;
 }
