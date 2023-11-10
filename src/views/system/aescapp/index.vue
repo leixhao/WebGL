@@ -81,7 +81,7 @@
         </template>
       </el-table-column>
       <el-table-column :label="t('public.createBy')" prop="createBy" width="150" />
-      <el-table-column label="状态" align="center" key="status" width="150">
+      <el-table-column :label="$t('user.status')" align="center" key="status" width="150">
         <template #default="scope">
           <el-switch v-model="scope.row.status" active-value="0" inactive-value="1"
             @change="handleStatusChange(scope.row)"></el-switch>

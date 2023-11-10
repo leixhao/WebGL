@@ -1,40 +1,34 @@
 <template>
     <div class="app-container">
-        <h4 class="form-header h4">基本信息</h4>
-        <el-form :model="form" label-width="80px">
+        <h4 class="form-header h4">{{ $t("tips.basicInformation") }}</h4>
+        <el-form ref="form" :model="form" label-width="120px">
             <el-row>
                 <el-col :span="8" :offset="2">
-                    <el-form-item label="用户昵称" prop="nickName">
+                    <el-form-item :label="$t('user.userNickName')" prop="nickName">
                         <el-input v-model="form.nickName" disabled />
                     </el-form-item>
                 </el-col>
                 <el-col :span="8" :offset="2">
-                    <el-form-item label="登录账号" prop="userName">
+                    <el-form-item :label="$t('login.username')" prop="phonenumber">
                         <el-input v-model="form.userName" disabled />
                     </el-form-item>
                 </el-col>
             </el-row>
         </el-form>
 
-        <h4 class="form-header h4">角色信息</h4>
-        <el-table
-            ref="roleRef"
-            v-loading="loading"
-            :row-key="getRowKey"
-            :data="roles.slice((pageNum - 1) * pageSize, pageNum * pageSize)"
-            @rowClick="clickRow"
-            @selectionChange="handleSelectionChange"
-        >
-            <el-table-column label="序号" width="55" type="index" align="center">
+        <h4 class="form-header h4">{{ $t("tips.roleInformation") }}</h4>
+        <el-table v-loading="loading" :row-key="getRowKey" @row-click="clickRow" ref="table"
+            @selection-change="handleSelectionChange" :data="roles.slice((pageNum - 1) * pageSize, pageNum * pageSize)">
+            <el-table-column :label="$t('role.index')" type="index" align="center" width="55">
                 <template #default="scope">
                     <span>{{ (pageNum - 1) * pageSize + scope.$index + 1 }}</span>
                 </template>
             </el-table-column>
             <el-table-column type="selection" :reserve-selection="true" width="55"></el-table-column>
-            <el-table-column label="角色编号" align="center" prop="roleId" />
-            <el-table-column label="角色名称" align="center" prop="roleName" />
-            <el-table-column label="权限字符" align="center" prop="roleKey" />
-            <el-table-column label="创建时间" align="center" prop="createTime" width="180">
+            <el-table-column :label="$t('role.id')" align="center" prop="roleId" />
+            <el-table-column :label="$t('role.name')" align="center" prop="roleName" />
+            <el-table-column :label="$t('role.key')" align="center" prop="roleKey" />
+            <el-table-column :label="$t('public.createTime')" align="center" prop="createTime" width="180">
                 <template #default="scope">
                     <span>{{ parseTime(scope.row.createTime) }}</span>
                 </template>
@@ -45,8 +39,8 @@
 
         <el-form label-width="100px">
             <div style="text-align: center; margin-left: -120px; margin-top: 30px">
-                <el-button type="primary" @click="submitForm()">提交</el-button>
-                <el-button @click="close()">返回</el-button>
+                <el-button type="primary" @click="submitForm()">{{ $t("button.submit") }}</el-button>
+                <el-button @click="close()">{{ $t("button.back") }}</el-button>
             </div>
         </el-form>
     </div>
@@ -102,6 +96,7 @@ function submitForm() {
 
 (() => {
     const userId = route.params && route.params.userId;
+    console.log(userId)
     if (userId) {
         loading.value = true;
         getAuthRole(userId).then((response: any) => {

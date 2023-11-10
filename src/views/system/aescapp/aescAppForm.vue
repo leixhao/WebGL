@@ -2,7 +2,7 @@
   <el-drawer class="felixDraw" style="font-weight: bold" :title="title" v-model="a" append-to-body
     :before-close="handleClose">
     <div style="font-weight: normal; margin-left: 10px; margin-right: 15px">
-      <el-form label-width="150px" ref="ruleFormRef" :model="ruleForm" :rules="rules">
+      <el-form :label-width="language === 'zh' ? '170px': '200px'" ref="ruleFormRef" :model="ruleForm" :rules="rules">
         <el-row>
           <el-col :span="24">
             <el-form-item :label="$t('aescapp.appName') + '：'" prop="appName">
@@ -61,6 +61,9 @@ import { getCurrentInstance, ComponentInternalInstance, ref, reactive, toRefs, d
 import { useI18n } from "vue-i18n";
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import useAppStore from '@/store/modules/app'
+const appStore = useAppStore();
+const { language }  = toRefs(appStore)
 const { t } = useI18n()
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const props = defineProps({

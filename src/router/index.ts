@@ -1,6 +1,7 @@
 import { createWebHistory, createRouter, RouteRecordRaw } from 'vue-router';
 /* Layout */
 import Layout from '@/layout/index.vue';
+import { messageRoutes } from './messageRouter'
 
 /**
  * Note: 路由配置项
@@ -111,8 +112,47 @@ export const constantRoutes: RouteRecordRaw[] = [
             component: () => import('@/views/system/aescapp/index.vue'),
             name: 'aescapp',
             meta: { title: '应用管理', icon: '' }
-        },]
+        },
+        {
+            path: '/system/email',
+            component: () => import('@/views/system/email/index.vue'),
+            // component: (resolve) => require(['@/views/index'], resolve),
+            name: 'Email',
+            meta: { title: '邮箱配置', icon: 'email', affix: false }
+        },
+        {
+            path: '/system/wechat',
+            component: () => import('@/views/system/wechat/index.vue'),
+            name: 'Wechat',
+            meta: { title: '企业微信小程序配置', icon: 'wechat', affix: false }
+        },
+        {
+            path: '/system/robot',
+            component: () => import('@/views/system/robot/index.vue'),
+            name: 'Robot',
+            meta: { title: '企业微信机器人配置', icon: 'people', affix: false }
+        },
+        {
+            path: '/system/template',
+            component: () => import('@/views/system/template/index.vue'),
+            name: 'TemplateIndex',
+            meta: { title: '模板配置', icon: 'excel', affix: false }
+        },
+        {
+            path: '/monitor/emailLog',
+            component: () => import('@/views/monitor/emailLog.vue'),
+            name: 'EmailLog',
+            meta: { title: '邮件通知日志', icon: 'log', affix: false }
+
+        },
+        {
+            path: '/monitor/wechatLog',
+            component: () => import('@/views/monitor/wechatLog.vue'),
+            name: 'WechatLog',
+            meta: { title: '微信通知日志', icon: 'log', affix: false }
+        }]
     },
+
 ];
 
 // 动态路由，基于用户权限动态去加载

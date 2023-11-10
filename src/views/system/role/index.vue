@@ -1,6 +1,6 @@
 <template>
     <div class="app-container">
-        <el-form v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true" label-width="68px">
+        <el-form v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true" >
             <el-form-item :label="$t('role.id')" prop="roleName">
                 <el-input v-model="queryParams.roleName" :placeholder="$t('role.inputName')" clearable
                     style="width: 240px" @keyup.enter="handleQuery" />
@@ -60,7 +60,7 @@
                         @change="handleStatusChange(scope.row)"></el-switch>
                 </template>
             </el-table-column>
-            <el-table-column :label="$t('public.createTime')" align="center" prop="createTime">
+            <el-table-column :label="$t('public.createTime')" align="center" prop="createTime" min-width="150">
                 <template #default="scope">
                     <span>{{ parseTime(scope.row.createTime) }}</span>
                 </template>
