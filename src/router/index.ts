@@ -57,6 +57,11 @@ export const constantRoutes: RouteRecordRaw[] = [
         ],
     },
     {
+        path:'/systemManage',
+        component: () => import('@/views/systemManage/index.vue'),
+        hidden:true
+    },
+    {
         path: '/login',
         component: () => import('@/views/login.vue'),
         hidden: true,
@@ -140,14 +145,14 @@ export const constantRoutes: RouteRecordRaw[] = [
         },
         {
             path: '/monitor/emailLog',
-            component: () => import('@/views/monitor/emailLog.vue'),
+            component: () => import('@/views/monitor/emailLog/index.vue'),
             name: 'EmailLog',
             meta: { title: '邮件通知日志', icon: 'log', affix: false }
 
         },
         {
             path: '/monitor/wechatLog',
-            component: () => import('@/views/monitor/wechatLog.vue'),
+            component: () => import('@/views/monitor/wechatLog/index.vue'),
             name: 'WechatLog',
             meta: { title: '微信通知日志', icon: 'log', affix: false }
         }]
@@ -230,7 +235,7 @@ export const dynamicRoutes: RouteRecordRaw[] = [
 ];
 
 const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHistory('/aesc/'),
     routes: constantRoutes,
     scrollBehavior(to, from, savedPosition) {
         if (savedPosition) {

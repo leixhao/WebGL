@@ -7,6 +7,7 @@ import { tansParams, blobValidate } from '@/utils/ruoyi';
 import cache from '@/plugins/cache';
 import { saveAs } from 'file-saver';
 import useUserStore from '@/store/modules/user';
+import useAppStore from '@/store/modules/app';
 
 let downloadLoadingInstance: ReturnType<typeof ElLoading.service>;
 
@@ -33,6 +34,11 @@ service.interceptors.request.use(
         const isRepeatSubmit = (config.headers || {}).repeatSubmit === false;
         if (getToken() && !isToken && config.headers) {
             config.headers['Authorization'] = 'Bearer ' + getToken(); // 让每个请求携带自定义token 请根据实际情况自行修改
+            if (useAppStore().language == 'zh') {
+                config.headers['Content-Language'] = 'zh_CN'
+              } else {
+                config.headers['Content-Language'] = 'en_US'
+              }
         }
         // get请求映射params参数
         if (config.method === 'get' && config.params) {

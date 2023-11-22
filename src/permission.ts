@@ -15,13 +15,18 @@ const whiteList = ['/login', '/register'];
 
 router.beforeEach((to, from, next) => {
     NProgress.start();
-    if (getToken()) {
+    if (getToken() && sessionStorage.getItem('line')) {
         to.meta.title && useSettingsStore().setTitle(to.meta.title);
         /* has token*/
         if (to.path === '/login') {
             next({ path: '/' });
             NProgress.done();
         } else {
+            if (!sessionStorage.getItem('appId') && to.path !== '/systemManage') {
+                //单点登录没有选择系统进入系统选择页面
+                next('/systemManage')
+                return;
+            }
             if (useUserStore().roles.length === 0) {
                 isRelogin.show = true;
                 // 判断当前用户是否已拉取完user_info信息

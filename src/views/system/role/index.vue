@@ -1,24 +1,23 @@
 <template>
     <div class="app-container">
-        <el-form v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true" >
+        <el-form v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true">
             <el-form-item :label="$t('role.id')" prop="roleName">
-                <el-input v-model="queryParams.roleName" :placeholder="$t('role.inputName')" clearable
-                    style="width: 240px" @keyup.enter="handleQuery" />
+                <el-input v-model="queryParams.roleName" :placeholder="$t('role.inputName')" clearable style="width: 240px"
+                    @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item :label="$t('role.key')" prop="roleKey">
-                <el-input v-model="queryParams.roleKey" :placeholder="$t('role.inputKey')" clearable 
-                    style="width: 240px" @keyup.enter="handleQuery" />
+                <el-input v-model="queryParams.roleKey" :placeholder="$t('role.inputKey')" clearable style="width: 240px"
+                    @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item :label="$t('user.status')" prop="status">
-                <el-select v-model="queryParams.status" :placeholder="$t('role.roleStatus')" clearable
-                    style="width: 240px">
+                <el-select v-model="queryParams.status" :placeholder="$t('role.roleStatus')" clearable style="width: 240px">
                     <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label"
                         :value="dict.value" />
                 </el-select>
             </el-form-item>
             <el-form-item :label="$t('public.createTime')">
-                <el-date-picker v-model="dateRange" style="width: 240px" value-format="yyyy-MM-dd"
-                    type="daterange" range-separator="-" :start-placeholder="$t('user.startDate')"
+                <el-date-picker v-model="dateRange" style="width: 240px" value-format="yyyy-MM-dd" type="daterange"
+                    range-separator="-" :start-placeholder="$t('user.startDate')"
                     :end-placeholder="$t('user.endDate')"></el-date-picker>
             </el-form-item>
             <el-form-item>
@@ -92,7 +91,7 @@
 
         <!-- 添加或修改角色配置对话框 -->
         <el-dialog v-model="open" :title="title" width="500px" append-to-body>
-            <el-form ref="roleRef" :model="form" :rules="rules" label-width="100px">
+            <el-form ref="roleRef" :model="form" :rules="rules" label-width="110px">
                 <el-form-item label="角色名称" prop="roleName">
                     <el-input v-model="form.roleName" placeholder="请输入角色名称" />
                 </el-form-item>
@@ -109,6 +108,13 @@
                 </el-form-item>
                 <el-form-item label="角色顺序" prop="roleSort">
                     <el-input-number v-model="form.roleSort" controls-position="right" :min="0" />
+                </el-form-item>
+                <el-form-item label="是否公共角色" prop="publicFlag">
+                    <el-radio-group v-model="form.publicFlag">
+                        <el-radio v-for="dict in publicOptions" :key="dict.value + dict.label" :label="dict.value">{{
+                            dict.label
+                        }}</el-radio>
+                    </el-radio-group>
                 </el-form-item>
                 <el-form-item label="状态">
                     <el-radio-group v-model="form.status">
@@ -217,6 +223,11 @@ const openDataScope = ref(false);
 const menuRef = ref<any>(null);
 const deptRef = ref<any>(null);
 
+// 是否是公共用户
+const publicOptions = ref([
+    {value: true, label: '是'},
+    {value: false, label: '否'},
+])
 /** 数据范围选项*/
 const dataScopeOptions = ref([
     { value: '1', label: '全部数据权限' },
@@ -231,7 +242,9 @@ const data = reactive<{
     queryParams: any;
     rules: any;
 }>({
-    form: {},
+    form: {
+        publicFlag: false
+    },
     queryParams: {
         pageNum: 1,
         pageSize: 10,
@@ -243,6 +256,7 @@ const data = reactive<{
         roleName: [{ required: true, message: '角色名称不能为空', trigger: 'blur' }],
         roleKey: [{ required: true, message: '权限字符不能为空', trigger: 'blur' }],
         roleSort: [{ required: true, message: '角色顺序不能为空', trigger: 'blur' }],
+        publicFlag: [{ required: true, message: '是否公共用户不能为空', trigger: 'blur' }],
     },
 });
 
@@ -366,6 +380,7 @@ function reset() {
         deptIds: [],
         menuCheckStrictly: true,
         deptCheckStrictly: true,
+        publicFlag: false,
         remark: undefined,
     };
     proxy!.resetForm('roleRef');

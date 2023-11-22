@@ -11,14 +11,9 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item> -->
-      <el-form-item label="邮件账号CODE" prop="maNo">
-        <el-input v-model="queryParams.maNo" placeholder="邮件账号CODE" clearable style="width: 240px"
-          @keyup.enter="handleQuery" />
-      </el-form-item>
-      <el-form-item label="是否禁用" prop="enable">
-        <el-select v-model="queryParams.enable" placeholder="是否禁用" clearable style="width: 240px">
-          <el-option v-for="dict in stateOption" :key="dict.value + dict.label" :label="dict.label" :value="dict.value" />
-        </el-select>
+      <el-form-item label="企业微信ID" prop="corpId">
+        <el-input v-model="queryParams.corpId" placeholder="应用ID" clearable style="width: 240px"
+          @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">{{ $t('button.search')
@@ -32,6 +27,10 @@
         <el-button type="primary" plain icon="Plus" size="small" @click="handleAdd">{{ $t('button.new')
         }}</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button type="danger" plain icon="Delete" size="small" :disabled="multiple" @click="handleDelete">{{
+          $t('button.delete') }}</el-button>
+      </el-col>
       <!-- <el-col :span="1.5">
         <el-button
           type="success"
@@ -43,34 +42,32 @@
           >修改</el-button
         >
       </el-col> -->
-      <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" size="small" :disabled="multiple" @click="handleDelete">{{
-          $t('button.delete') }}</el-button>
-      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table class="table_divClass" v-loading="loading" :data="emailList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <!-- <el-table-column label="ID"  prop="id" min-width="100" /> -->
-      <!-- <el-table-column label="应用ID"  prop="appId" min-width="280"/> -->
-      <el-table-column label="账号CODE" prop="maNo" min-width="150" />
-      <el-table-column label="邮件名称" prop="fromsName" min-width="200" />
-      <!-- <el-table-column label="服务器"   prop="host"  min-width="150"/> -->
-      <!-- <el-table-column label="端口号"  prop="port" min-width="80" /> -->
-      <el-table-column label="发件箱" prop="froms" min-width="240" />
-      <el-table-column label="是否禁用" align="center" min-width="80">
-        <template #default="scope">
-          <el-switch v-model="scope.row.enable" @change="handleStatusChange(scope.row)"></el-switch>
+    <el-table class="table_divClass" v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="50" align="center" />
+      <!-- <el-table-column label="ID" prop="id" min-width="100" /> -->
+      <el-table-column label="配置CODE" prop="wcNo" />
+      <el-table-column label="应用ID" prop="appId" />
+      <el-table-column label="应用名称" prop="appName" />
+      <el-table-column label="企业微信ID" prop="agentId" />
+      <el-table-column label="企业微信应用ID" prop="corpId" />
+      <!-- <el-table-column label="应用密钥" prop="corpSecret" min-width="400"/> -->
+      <!-- <el-table-column label="enable" align="center" width="80">
+        <template slot-scope="scope">
+          <el-switch
+            v-model="scope.row.enable"
+            @change="handleStatusChange(scope.row)"
+          ></el-switch>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column fixed="right" min-width="100" label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button size="small" type="text" icon="Edit" @click="handleUpdate(scope.row)">{{ $t('button.edit')
           }}</el-button>
           <el-button size="small" type="text" icon="Delete" @click="handleDelete(scope.row)">{{
-            $t('button.delete')
-          }}</el-button>
+            $t('button.delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -78,38 +75,33 @@
     <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
       @pagination="getList" />
 
-    <!-- 添加或修改email -->
+    <!-- 企业微信配置 -->
     <el-dialog :title="title" v-model="open" center append-to-body>
       <div class="demo-drawer__content">
-        <el-form class="m20" ref="ruleFormRef" :model="rulesForm" :rules="rules" label-width="100px">
+        <el-form class="m20" ref="ruleFormRef" :model="rulesForm" :rules="rules" label-width="150px">
           <el-form-item label="应用ID" prop="appId">
             <el-input v-model="rulesForm.appId" placeholder="应用ID" :disabled="!!rulesForm.id" />
           </el-form-item>
-          <el-form-item label="账号CODE" prop="maNo" v-if="rulesForm.maNo != null">
-            <el-input v-model="rulesForm.maNo" />
+          <el-form-item label="应用名称" prop="appName">
+            <el-input v-model="rulesForm.appName" placeholder="应用名称" />
           </el-form-item>
-          <el-form-item label="发件箱名称" prop="fromsName">
-            <el-input v-model="rulesForm.fromsName" />
+          <el-form-item label="CODE" prop="wcNo" v-if="rulesForm.id != null">
+            <el-input v-model="rulesForm.wcNo" placeholder="CODE" disabled />
           </el-form-item>
-          <el-form-item prop="host">
-            <span slot="label">服务器地址 </span>
-            <el-input v-model="rulesForm.host" placeholder="服务器地址" />
+          <el-form-item label="agentId" prop="agentId">
+            <el-input v-model="rulesForm.agentId" placeholder="agentId" />
           </el-form-item>
-          <el-form-item label="端口号" prop="port">
-            <el-input v-model="rulesForm.port" placeholder="端口号" />
+          <el-form-item label="企业微信应用ID" prop="corpId">
+            <el-input v-model="rulesForm.corpId" placeholder="企业微信应用ID" />
           </el-form-item>
-          <el-form-item label="发件箱" prop="froms">
-            <el-input v-model="rulesForm.froms" placeholder="发件箱" />
+          <el-form-item label="应用密钥" prop="corpSecret">
+            <el-input v-model="rulesForm.corpSecret" placeholder="应用密钥" />
           </el-form-item>
-          <el-form-item label="用户名" prop="user">
-            <el-input v-model="rulesForm.user" placeholder="用户名" />
-          </el-form-item>
-          <el-form-item label="密码" prop="pass">
-            <el-input v-model="rulesForm.pass" show-password placeholder="密码" />
-          </el-form-item>
-          <el-form-item label="是否禁用" prop="enable">
-            <el-switch v-model="rulesForm.enable"></el-switch>
-          </el-form-item>
+          <!-- <el-form-item label="是否禁用">
+            <el-radio-group v-model="form.enable">
+              <el-switch v-model="form.enable"></el-switch>
+            </el-radio-group>
+          </el-form-item> -->
         </el-form>
         <div class="demo-drawer__footer">
           <el-button class="pull-right" size="small" type="primary" @click="submitForm(ruleFormRef)">确 定</el-button>
@@ -120,21 +112,21 @@
   </div>
 </template>
 
-<script setup lang="ts" name="Role">
+<script lang="ts" setup>
 import {
-  listEmail,
-  getEmaliDetail,
+  list,
+  getRole,
   delRole,
-  addEmailAccount,
-  updateEmail,
-  changeEmalAccountStatus,
-} from "@/api/system/email";
+  addRole,
+  updateWechat,
+  dataScope,
+  changeRoleStatus,
+} from "@/api/system/wechat";
 import { getCurrentInstance, ComponentInternalInstance, ref } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus'
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { sys_common_status } = proxy!.useDict('sys_common_status');
-
 const ruleFormRef = ref<FormInstance>()
 // 遮罩层
 const loading = ref(true);
@@ -149,7 +141,7 @@ const showSearch = ref(true);
 // 总条数
 const total = ref(0);
 // 角色表格数据
-const emailList = ref<any[]>([]);
+const dataList = ref<any[]>([]);
 // 弹出层标题
 const title = ref<any>('');
 // 是否显示弹出层
@@ -158,7 +150,7 @@ const open = ref(false);
 const openDataScope = ref(false);
 const menuExpand = ref(false);
 const menuNodeAll = ref(false);
-const deptExpand = ref(false);
+const deptExpand = ref(true);
 const deptNodeAll = ref(false);
 const stateOption = ref([
   {
@@ -201,27 +193,21 @@ const menuOptions = ref<any[]>([])
 const deptOptions = ref<any[]>([])
 // 查询参数
 const queryParams = ref({
-  appId: '',
-  maNo: '',
-  enable: '',
   pageNum: 1,
   pageSize: 10,
-  roleName: undefined,
-  roleKey: undefined,
-  status: undefined,
+  corpId: undefined,
+  appId: undefined,
 })
 // 表单参数
 const rulesForm = ref({
   id: null,
   appId: null,
-  maNo: null,
-  fromsName: undefined,
-  host: '',
-  port: '',
-  froms: '',
-  user: undefined,
-  pass: undefined,
-  enable: ''
+  appName: null,
+  wcNo: null,
+  agentId: null,
+  corpId: null,
+  corpSecret: null,
+  enable: null
 })
 const defaultProps = ref({
   children: "children",
@@ -229,73 +215,71 @@ const defaultProps = ref({
 })
 // 表单校验
 const rules = ref({
-  host: [
-    { required: true, message: "服务地址不能为空", trigger: "blur" },
+  appId: [{ required: true, message: "应用ID不能为空", trigger: "blur" }],
+  appName: [
+    { required: true, message: "应用名称不能为空", trigger: "blur" },
   ],
-  fromsName: [
-    { required: true, message: "发件箱名称不能为空", trigger: "blur" },
+  agentId: [
+    { required: true, message: "agentId不能为空", trigger: "blur" },
   ],
-  port: [{ required: true, message: "端口号不能为空", trigger: "blur" }],
-  froms: [{ required: true, message: "发件箱不能为空", trigger: "blur" }],
-  user: [{ required: true, message: "用户名不能为空", trigger: "blur" }],
-  pass: [{ required: true, message: "密码不能为空", trigger: "blur" }],
-  enable: [
-    { required: true, message: "启用停用状态不能为空", trigger: "blur" },
+  corpId: [
+    { required: true, message: "corpId不能为空", trigger: "blur" },
   ],
+  corpSecret: [
+    {
+      required: true,
+      message: "企业微信应用密钥不能为空",
+      trigger: "blur",
+    },
+  ]
 })
-getList()
-interface NObject {
-  [key: string]: string | number | undefined | null | void
-}
+getList();
 /** 查询角色列表 */
 function getList() {
   loading.value = true;
-  const obj = queryParams.value as NObject;
-  Object.keys(obj).forEach((key) => {
-    if (!obj[key]) {
-      delete obj[key]
-    }
-  })
-  listEmail(queryParams.value).then((response: any) => {
-    emailList.value = response.rows;
+  list(queryParams.value).then((response: any) => {
+    dataList.value = response.rows;
     total.value = response.total;
     loading.value = false;
   });
 }
-/** 邮箱信息ID查询菜单树结构 */
+// /** 邮箱信息ID查询菜单树结构 */
 // getRoleMenuTreeselect(roleId) {
 //   return roleMenuTreeselect(roleId).then((response) => {
 //     this.menuOptions = response.menus;
 //     return response;
 //   });
 // },
-// 邮箱信息修改
+// 角色状态修改
 function handleStatusChange(row: any) {
-  let text = row.enable ? "启用" : "停用";
+  let text = row.enable === "0" ? "启用" : "停用";
   proxy!.$modal
-    .confirm('确认要"' + text + '"账号吗？')
+    .confirm('确认要"' + text + '""' + row.wcNo)
     .then(function () {
-      return changeEmalAccountStatus(row);
+      return changeRoleStatus(row.wcNo, row.enable);
     })
     .then(() => {
       proxy!.$modal.msgSuccess(text + "成功");
     })
     .catch(function () {
-      // 正常来说应该在确认修改后再改按钮样式
-      // 但是这样代码改动量最小
       row.enable = !row.enable;
     });
 }
-// // 取消按钮
+// 取消按钮
 function cancel() {
   open.value = false;
   reset();
 }
+// 取消按钮（数据权限）
+function cancelDataScope() {
+  openDataScope.value = false;
+  reset();
+}
 // 表单重置
 function reset() {
-  // if (proxy!.$refs.menu != undefined) {
-  //   proxy!.$refs.menu.setCheckedKeys([]);
-  // }
+  if (proxy?.$refs.menu != undefined) {
+    (proxy?.$refs.menu as any).setCheckedKeys([]);
+  }
   (menuExpand.value = false),
     (menuNodeAll.value = false),
     (deptExpand.value = true),
@@ -303,32 +287,30 @@ function reset() {
     (rulesForm.value = {
       id: null,
       appId: null,
-      maNo: null,
-      fromsName: undefined,
-      host: '',
-      port: '',
-      froms: '',
-      user: undefined,
-      pass: undefined,
-      enable: ''
+      appName: null,
+      wcNo: null,
+      agentId: null,
+      corpId: null,
+      corpSecret: null,
+      enable: null
     });
-  proxy!.resetForm("form");
+  proxy?.resetForm("ruleFormRef");
 }
 /** 搜索按钮操作 */
 function handleQuery() {
   queryParams.value.pageNum = 1;
-  // this.queryParams.appId = !!this.queryParams.appId
-  //   ? this.queryParams.appId
-  //   : undefined;
-  // this.queryParams.maNo = !!this.queryParams.maNo
-  //   ? this.queryParams.maNo
-  //   : undefined;
+  queryParams.value.appId = !!queryParams.value.appId
+    ? queryParams.value.appId
+    : undefined;
+  queryParams.value.corpId = !!queryParams.value.corpId
+    ? queryParams.value.corpId
+    : undefined;
   getList();
 }
 /** 重置按钮操作 */
 function resetQuery() {
   dateRange.value = [];
-  proxy!.resetForm("queryForm");
+  proxy?.resetForm("queryForm");
   handleQuery();
 }
 // 多选框选中数据
@@ -346,12 +328,11 @@ function handleAdd() {
 /** 修改按钮操作 */
 function handleUpdate(row: any) {
   reset();
-  const id = row.id || ids.value;
-  getEmaliDetail(id).then((response) => {
-    rulesForm.value = response.data;
-    open.value = true;
-    title.value = "修改邮箱配置";
-  });
+  let obj = JSON.parse(JSON.stringify(row));
+  // this.response.data=row;
+  rulesForm.value = obj;
+  open.value = true;
+  title.value = "修改配置";
 }
 /** 提交按钮 */
 const submitForm = async (formEl: FormInstance | undefined) => {
@@ -359,13 +340,25 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   await formEl.validate((valid, fields) => {
     if (valid) {
       if (rulesForm.value.id != undefined) {
-        updateEmail(rulesForm).then((response) => {
+        updateWechat(rulesForm.value).then((response) => {
           proxy?.$modal.msgSuccess("修改成功");
           open.value = false;
           getList();
         });
       } else {
-        addEmailAccount(rulesForm).then((response) => {
+        console.log(rulesForm);
+        let param = {
+          agentId: rulesForm.value.agentId,
+          appId: rulesForm.value.appId,
+          appName: rulesForm.value.appName,
+          corpId: rulesForm.value.corpId,
+          corpSecret: rulesForm.value.corpSecret,
+          enable: rulesForm.value.enable,
+          // "id": 0,
+          // "waNo": ""
+        };
+        // this.form.menuIds = this.getMenuAllCheckedKeys();
+        addRole(rulesForm.value).then((response) => {
           proxy?.$modal.msgSuccess("新增成功");
           open.value = false;
           getList();
@@ -387,16 +380,6 @@ function handleDelete(row: any) {
       proxy?.$modal.msgSuccess("删除成功");
     })
     .catch(() => { });
-}
-/** 导出按钮操作 */
-function handleExport() {
-  proxy!.download(
-    "system/role/export",
-    {
-      ...queryParams.value,
-    },
-    `role_${new Date().getTime()}.xlsx`
-  );
 }
 </script>
 <style lang="scss" scoped>

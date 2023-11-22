@@ -3,31 +3,18 @@
         <el-form v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true">
             <el-form-item label="字典名称" prop="dictType">
                 <el-select v-model="queryParams.dictType" style="width: 200px">
-                    <el-option
-                        v-for="item in typeOptions"
-                        :key="item.dictId"
-                        :label="item.dictName"
-                        :value="item.dictType"
-                    />
+                    <el-option v-for="item in typeOptions" :key="item.dictId" :label="item.dictName"
+                        :value="item.dictType" />
                 </el-select>
             </el-form-item>
             <el-form-item label="字典标签" prop="dictLabel">
-                <el-input
-                    v-model="queryParams.dictLabel"
-                    placeholder="请输入字典标签"
-                    clearable
-                    style="width: 200px"
-                    @keyup.enter="handleQuery"
-                />
+                <el-input v-model="queryParams.dictLabel" placeholder="请输入字典标签" clearable style="width: 200px"
+                    @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="状态" prop="status">
                 <el-select v-model="queryParams.status" placeholder="数据状态" clearable style="width: 200px">
-                    <el-option
-                        v-for="dict in sys_normal_disable"
-                        :key="dict.value"
-                        :label="dict.label"
-                        :value="dict.value"
-                    />
+                    <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label"
+                        :value="dict.value" />
                 </el-select>
             </el-form-item>
             <el-form-item>
@@ -38,46 +25,20 @@
 
         <el-row :gutter="10" class="mb8">
             <el-col :span="1.5">
-                <el-button
-                    v-hasPermi="['system:dict:add']"
-                    type="primary"
-                    plain
-                    icon="Plus"
-                    @click="handleAdd"
-                    >新增</el-button
-                >
+                <el-button v-hasPermi="['system:dict:add']" type="primary" plain icon="Plus"
+                    @click="handleAdd">新增</el-button>
             </el-col>
             <el-col :span="1.5">
-                <el-button
-                    v-hasPermi="['system:dict:edit']"
-                    type="success"
-                    plain
-                    icon="Edit"
-                    :disabled="single"
-                    @click="handleUpdate"
-                    >修改</el-button
-                >
+                <el-button v-hasPermi="['system:dict:edit']" type="success" plain icon="Edit" :disabled="single"
+                    @click="handleUpdate">修改</el-button>
             </el-col>
             <el-col :span="1.5">
-                <el-button
-                    v-hasPermi="['system:dict:remove']"
-                    type="danger"
-                    plain
-                    icon="Delete"
-                    :disabled="multiple"
-                    @click="handleDelete"
-                    >删除</el-button
-                >
+                <el-button v-hasPermi="['system:dict:remove']" type="danger" plain icon="Delete" :disabled="multiple"
+                    @click="handleDelete">删除</el-button>
             </el-col>
             <el-col :span="1.5">
-                <el-button
-                    v-hasPermi="['system:dict:export']"
-                    type="warning"
-                    plain
-                    icon="Download"
-                    @click="handleExport"
-                    >导出</el-button
-                >
+                <el-button v-hasPermi="['system:dict:export']" type="warning" plain icon="Download"
+                    @click="handleExport">导出</el-button>
             </el-col>
             <el-col :span="1.5">
                 <el-button type="warning" plain icon="Close" @click="handleClose">关闭</el-button>
@@ -113,33 +74,16 @@
             </el-table-column>
             <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
                 <template #default="scope">
-                    <el-button
-                        v-hasPermi="['system:dict:edit']"
-                        link
-                        type="primary"
-                        icon="Edit"
-                        @click="handleUpdate(scope.row)"
-                        >修改</el-button
-                    >
-                    <el-button
-                        v-hasPermi="['system:dict:remove']"
-                        link
-                        type="primary"
-                        icon="Delete"
-                        @click="handleDelete(scope.row)"
-                        >删除</el-button
-                    >
+                    <el-button v-hasPermi="['system:dict:edit']" link type="primary" icon="Edit"
+                        @click="handleUpdate(scope.row)">修改</el-button>
+                    <el-button v-hasPermi="['system:dict:remove']" link type="primary" icon="Delete"
+                        @click="handleDelete(scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
 
-        <pagination
-            v-show="total > 0"
-            v-model:page="queryParams.pageNum"
-            v-model:limit="queryParams.pageSize"
-            :total="total"
-            @pagination="getList"
-        />
+        <pagination v-show="total > 0" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize"
+            :total="total" @pagination="getList" />
 
         <!-- 添加或修改参数配置对话框 -->
         <el-dialog v-model="open" :title="title" width="500px" append-to-body>
@@ -156,17 +100,19 @@
                 <el-form-item label="样式属性" prop="cssClass">
                     <el-input v-model="form.cssClass" placeholder="请输入样式属性" />
                 </el-form-item>
+                <el-form-item label="国际语言" prop="globalLang">
+                    <el-select v-model="form.globalLang">
+                        <el-option v-for="item in globalLangOptions" :key="item.value" :label="item.label"
+                            :value="item.value"></el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="显示排序" prop="dictSort">
                     <el-input-number v-model="form.dictSort" controls-position="right" :min="0" />
                 </el-form-item>
                 <el-form-item label="回显样式" prop="listClass">
                     <el-select v-model="form.listClass">
-                        <el-option
-                            v-for="item in listClassOptions"
-                            :key="item.value"
-                            :label="item.label + '(' + item.value + ')'"
-                            :value="item.value"
-                        ></el-option>
+                        <el-option v-for="item in listClassOptions" :key="item.value"
+                            :label="item.label + '(' + item.value + ')'" :value="item.value"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="状态" prop="status">
@@ -225,12 +171,19 @@ const listClassOptions = ref([
     { value: 'danger', label: '危险' },
 ]);
 
+const globalLangOptions = [
+    { value: 'zh_CN', label: '中文简体' },
+    { value: 'en_US', label: 'English' },
+    { value: 'ja_JP', label: 'にほんご' },]
+
 const data = reactive<{
     form: any;
     queryParams: any;
     rules: any;
 }>({
-    form: {},
+    form: {
+        globalLang: 'zh_CN'
+    },
     queryParams: {
         pageNum: 1,
         pageSize: 10,
@@ -242,6 +195,7 @@ const data = reactive<{
         dictLabel: [{ required: true, message: '数据标签不能为空', trigger: 'blur' }],
         dictValue: [{ required: true, message: '数据键值不能为空', trigger: 'blur' }],
         dictSort: [{ required: true, message: '数据顺序不能为空', trigger: 'blur' }],
+        globalLang: [{ required: true, message: '国际语言不能为空', trigger: 'blur' }],
     },
 });
 
@@ -279,6 +233,7 @@ function cancel() {
 /** 表单重置 */
 function reset() {
     form.value = {
+        globalLang: 'zh_CN',
         dictCode: undefined,
         dictLabel: undefined,
         dictValue: undefined,

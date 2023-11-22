@@ -2,6 +2,7 @@ import { login, logout, getInfo, ADLogin } from '@/api/login';
 import { getToken, setToken, setExpiresIn, removeToken } from '@/utils/auth';
 import defAva from '@/assets/images/profile.jpg';
 import { defineStore } from 'pinia';
+import { SessionStorage } from '@zeronejs/utils';
 
 const useUserStore = defineStore('user', {
     state: (): {
@@ -50,6 +51,7 @@ const useUserStore = defineStore('user', {
                     setToken(data.access_token)
                     this.token = data.access_token;
                     setExpiresIn(data.expires_in)
+                    sessionStorage.setItem('line', 'q2rr14')
                     // commit('SET_EXPIRES_IN', data.expires_in)
                     resolve(1)
                 }).catch(error => {
@@ -93,6 +95,7 @@ const useUserStore = defineStore('user', {
                         this.roles = [];
                         this.permissions = [];
                         removeToken();
+                        sessionStorage.removeItem('line')
                         resolve(1);
                     })
                     .catch(error => {

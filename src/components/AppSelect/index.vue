@@ -1,6 +1,17 @@
 <template>
   <div>
-    <el-dropdown trigger="click" class="international" @command="handleSelect">
+    <el-tooltip class="box-item" effect="dark" content="返回选择应用" placement="bottom-start">
+      <div alt style="
+                  cursor: pointer;
+                  height: 50px;
+                  line-height: 50px;
+                  color: rgb(255, 255, 255);
+                  text-align: center;
+                  font-size: 20px;" @click="backSys">
+        {{ title }}
+      </div>
+    </el-tooltip>
+    <!-- <el-dropdown trigger="click" class="international" @command="handleSelect">
       <span class="sidebar-title" :style="{
         color: variables.sidebarTitle,
       }">
@@ -16,7 +27,7 @@
           </el-dropdown-item>
         </el-dropdown-menu>
       </template>
-    </el-dropdown>
+    </el-dropdown> -->
   </div>
 </template>
 
@@ -35,6 +46,9 @@ const from = ref({
   appId: null
 })
 const sideTheme = computed(() => settingsStore.sideTheme);
+const backSys = () => {
+  window.location.href = window.location.origin + "/aesc/systemManage";
+}
 function handleSelect(value) {
   regenerate(value).then((response) => {
     appList.value.forEach((el) => {

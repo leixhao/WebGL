@@ -1,176 +1,102 @@
 <template>
     <div class="app-container">
-        <el-form v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true" label-width="68px">
-            <el-form-item label="登录地址" prop="ipaddr">
-                <el-input
-                    v-model="queryParams.ipaddr"
-                    placeholder="请输入登录地址"
-                    clearable
-                    style="width: 240px"
-                    @keyup.enter="handleQuery"
-                />
+        <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+            <el-form-item :label="$t('logininfor.address')" prop="ipaddr">
+                <el-input v-model="queryParams.ipaddr" :placeholder="$t('logininfor.addressIpt')" clearable
+                    style="width: 240px;" @keyup.enter.native="handleQuery" />
             </el-form-item>
-            <el-form-item label="用户名称" prop="userName">
-                <el-input
-                    v-model="queryParams.userName"
-                    placeholder="请输入用户名称"
-                    clearable
-                    style="width: 240px"
-                    @keyup.enter="handleQuery"
-                />
+            <el-form-item :label="$t('logininfor.name')" prop="userName">
+                <el-input v-model="queryParams.userName" :placeholder="$t('logininfor.nameIpt')" clearable
+                    style="width: 240px;" @keyup.enter.native="handleQuery" />
             </el-form-item>
-            <el-form-item label="状态" prop="status">
-                <el-select v-model="queryParams.status" placeholder="登录状态" clearable style="width: 240px">
-                    <el-option
-                        v-for="dict in sys_common_status"
-                        :key="dict.value"
-                        :label="dict.label"
-                        :value="dict.value"
-                    />
+            <el-form-item :label="$t('logininfor.status')" prop="status">
+                <el-select v-model="queryParams.status" :placeholder="$t('logininfor.status')" clearable
+                    style="width: 240px">
+                    <el-option v-for="dict in sys_common_status" :key="dict.value" :label="dict.label"
+                        :value="dict.value" />
                 </el-select>
             </el-form-item>
-            <el-form-item label="登录时间" style="width: 308px">
-                <el-date-picker
-                    v-model="dateRange"
-                    value-format="YYYY-MM-DD HH:mm:ss"
-                    type="daterange"
-                    range-separator="-"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                    :default-time="[new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 1, 1, 23, 59, 59)]"
-                ></el-date-picker>
+            <el-form-item :label="$t('logininfor.time')">
+                <el-date-picker v-model="dateRange" style="width: 240px" value-format="yyyy-MM-dd" type="daterange"
+                    range-separator="-" :start-placeholder="$t('logininfor.startDate')"
+                    :end-placeholder="$t('logininfor.endDate')"></el-date-picker>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-                <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+                <el-button type="primary" icon="Search" @click="handleQuery">{{ $t("button.search")
+                }}</el-button>
+                <el-button icon="Refresh" @click="resetQuery">{{ $t("button.reset") }}</el-button>
             </el-form-item>
         </el-form>
 
         <el-row :gutter="10" class="mb8">
             <el-col :span="1.5">
-                <el-button
-                    v-hasPermi="['monitor:logininfor:remove']"
-                    type="danger"
-                    plain
-                    icon="Delete"
-                    :disabled="multiple"
-                    @click="handleDelete"
-                    >删除</el-button
-                >
+                <el-button type="danger" plain icon="Delete" size="small" :disabled="multiple" @click="handleDelete"
+                    v-hasPermi="['system:logininfor:remove']">{{ $t("button.delete") }}</el-button>
             </el-col>
             <el-col :span="1.5">
-                <el-button
-                    v-hasPermi="['monitor:logininfor:remove']"
-                    type="danger"
-                    plain
-                    icon="Delete"
-                    @click="handleClean"
-                    >清空</el-button
-                >
+                <el-button type="danger" plain icon="Delete" size="small" @click="handleClean"
+                    v-hasPermi="['system:logininfor:remove']">{{ $t("button.remove") }}</el-button>
             </el-col>
             <el-col :span="1.5">
-                <el-button
-                    v-hasPermi="['monitor:logininfor:unlock']"
-                    type="primary"
-                    plain
-                    icon="Unlock"
-                    :disabled="single"
-                    @click="handleUnlock"
-                    >解锁</el-button
-                >
-            </el-col>
-            <el-col :span="1.5">
-                <el-button
-                    v-hasPermi="['monitor:logininfor:export']"
-                    type="warning"
-                    plain
-                    icon="Download"
-                    @click="handleExport"
-                    >导出</el-button
-                >
+                <el-button type="warning" plain icon="Download" size="small" @click="handleExport"
+                    v-hasPermi="['system:logininfor:export']">{{ $t("button.export") }}</el-button>
             </el-col>
             <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
 
-        <el-table
-            ref="logininforRef"
-            v-loading="loading"
-            :data="logininforList"
-            :default-sort="defaultSort"
-            @selectionChange="handleSelectionChange"
-            @sortChange="handleSortChange"
-        >
+        <el-table ref="tables" v-loading="loading" :data="dataList" @selection-change="handleSelectionChange"
+            :default-sort="defaultSort" @sort-change="handleSortChange">
             <el-table-column type="selection" width="55" align="center" />
-            <el-table-column label="访问编号" align="center" prop="infoId" />
-            <el-table-column
-                label="用户名称"
-                align="center"
-                prop="userName"
-                :show-overflow-tooltip="true"
-                sortable="custom"
-                :sort-orders="['descending', 'ascending']"
-            />
-            <el-table-column label="地址" align="center" prop="ipaddr" :show-overflow-tooltip="true" />
-            <el-table-column
-                label="登录地点"
-                align="center"
-                prop="loginLocation"
-                :show-overflow-tooltip="true"
-            />
-            <el-table-column label="操作系统" align="center" prop="os" :show-overflow-tooltip="true" />
-            <el-table-column label="浏览器" align="center" prop="browser" :show-overflow-tooltip="true" />
-            <el-table-column label="登录状态" align="center" prop="status">
+            <el-table-column :label="$t('logininfor.num')" align="center" prop="infoId" />
+            <el-table-column :label="$t('logininfor.name')" align="center" prop="userName" :show-overflow-tooltip="true"
+                sortable="custom" :sort-orders="['descending', 'ascending']" />
+            <el-table-column :label="$t('logininfor.address')" align="center" prop="ipaddr" width="130"
+                :show-overflow-tooltip="true" />
+            <el-table-column :label="$t('logininfor.status')" align="center" prop="status" :formatter="statusFormat" />
+            <el-table-column :label="$t('logininfor.remarks')" align="center" prop="msg" />
+            <el-table-column :label="$t('logininfor.visit')" align="center" prop="accessTime" sortable="custom"
+                :sort-orders="['descending', 'ascending']" width="180">
                 <template #default="scope">
-                    <dict-tag :options="sys_common_status" :value="scope.row.status" />
-                </template>
-            </el-table-column>
-            <el-table-column label="描述" align="center" prop="msg" :show-overflow-tooltip="true" />
-            <el-table-column
-                label="访问时间"
-                align="center"
-                prop="loginTime"
-                sortable="custom"
-                :sort-orders="['descending', 'ascending']"
-                width="180"
-            >
-                <template #default="scope">
-                    <span>{{ parseTime(scope.row.loginTime) }}</span>
+                    <span>{{ parseTime(scope.row.accessTime) }}</span>
                 </template>
             </el-table-column>
         </el-table>
 
-        <pagination
-            v-show="total > 0"
-            v-model:page="queryParams.pageNum"
-            v-model:limit="queryParams.pageSize"
-            :total="total"
-            @pagination="getList"
-        />
+        <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
+            @pagination="getList" />
     </div>
 </template>
-
-<script setup name="Logininfor" lang="ts">
-/* eslint-disable camelcase */
-import { list, delLogininfor, cleanLogininfor, unlockLogininfor } from '@/api/system/logininfor.js';
-import { parseTime } from '@/utils/ruoyi';
-import { Sort } from 'element-plus';
+  
+<script lang="ts" setup>
+import { list, delLogininfor, cleanLogininfor } from "@/api/system/logininfor";
 import { getCurrentInstance, ComponentInternalInstance, ref } from 'vue';
+import type { FormInstance, FormRules } from 'element-plus'
+import { ElMessage, ElMessageBox, Sort } from 'element-plus'
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { sys_common_status } = proxy!.useDict('sys_common_status');
-
-const logininforList = ref<any[]>([]);
+console.log(sys_common_status)
+const ruleFormRef = ref<FormInstance>()
+// 遮罩层
 const loading = ref(true);
-const showSearch = ref(true);
+// 选中数组
 const ids = ref<number[]>([]);
+// 非单个禁用
 const single = ref(true);
+// 非多个禁用
 const multiple = ref(true);
-const selectName = ref<any>('');
+// 显示搜索条件
+const showSearch = ref(true);
+// 总条数
 const total = ref(0);
-const dateRange = ref<any>([]);
-const defaultSort = ref<Sort>({ prop: 'loginTime', order: 'descending' });
-
-// 查询参数
+// 角色表格数据
+const emailList = ref<any[]>([]);
+// 弹出层标题
+const title = ref<any>('');
+// const statusOptions = ref([]);
+const dateRange = ref<any>([])
+const dataList = ref([])
+const defaultSort = ref<Sort>({ prop: 'loginTime', order: 'descending' })
 const queryParams = ref({
     pageNum: 1,
     pageSize: 10,
@@ -178,17 +104,22 @@ const queryParams = ref({
     userName: undefined,
     status: undefined,
     orderByColumn: undefined,
-    isAsc: undefined,
-});
-
+    isAsc: undefined
+})
+getList();
 /** 查询登录日志列表 */
 function getList() {
     loading.value = true;
-    list(proxy!.addDateRange(queryParams.value, dateRange.value)).then((response: any) => {
-        logininforList.value = response.rows;
+    list(proxy?.addDateRange(queryParams.value, dateRange.value)).then((response: any) => {
+        dataList.value = response.rows;
         total.value = response.total;
         loading.value = false;
-    });
+    }
+    );
+}
+// 登录状态字典翻译
+function statusFormat(row: any) {
+    return proxy?.selectDictLabel(sys_common_status.value, row.status);
 }
 /** 搜索按钮操作 */
 function handleQuery() {
@@ -198,16 +129,14 @@ function handleQuery() {
 /** 重置按钮操作 */
 function resetQuery() {
     dateRange.value = [];
-    proxy!.resetForm('queryRef');
-    queryParams.value.pageNum = 1;
-    (proxy!.$refs['logininforRef'] as any).sort(defaultSort.value.prop, defaultSort.value.order);
+    proxy?.resetForm("queryForm");
+    (proxy?.$refs.tables as any).sort(defaultSort.value.prop, defaultSort.value.order)
+    handleQuery();
 }
 /** 多选框选中数据 */
-function handleSelectionChange(selection: any[]) {
-    ids.value = selection.map(item => item.infoId);
-    multiple.value = !selection.length;
-    single.value = selection.length !== 1;
-    selectName.value = selection.map(item => item.userName);
+function handleSelectionChange(selection: any) {
+    ids.value = selection.map((item: any) => item.infoId)
+    multiple.value = !selection.length
 }
 /** 排序触发事件 */
 function handleSortChange(column: any, prop: any, order: any) {
@@ -218,53 +147,42 @@ function handleSortChange(column: any, prop: any, order: any) {
 /** 删除按钮操作 */
 function handleDelete(row: any) {
     const infoIds = row.infoId || ids.value;
-    proxy!.$modal
-        .confirm('是否确认删除访问编号为"' + infoIds + '"的数据项?')
-        .then(function () {
-            return delLogininfor(infoIds);
+    ElMessageBox.confirm('是否确认删除访问编号为"' + infoIds + '"的数据项?', "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+    }).then(function () {
+        return delLogininfor(infoIds);
+    }).then(() => {
+        getList();
+        ElMessage({
+            type: 'success',
+            message: '删除成功',
         })
-        .then(() => {
-            getList();
-            proxy!.$modal.msgSuccess('删除成功');
-        });
-    //   .catch(() => {});
+    }).catch(() => { });
 }
 /** 清空按钮操作 */
 function handleClean() {
-    proxy!.$modal
-        .confirm('是否确认清空所有登录日志数据项?')
-        .then(function () {
-            return cleanLogininfor();
+    ElMessageBox.confirm('是否确认清空所有登录日志数据项?', "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+    }).then(function () {
+        return cleanLogininfor();
+    }).then(() => {
+        getList();
+        ElMessage({
+            type: 'success',
+            message: '清空成功',
         })
-        .then(() => {
-            getList();
-            proxy!.$modal.msgSuccess('清空成功');
-        });
-    //   .catch(() => {});
-}
-/** 解锁按钮操作 */
-function handleUnlock() {
-    const username = selectName.value;
-    proxy!.$modal
-        .confirm('是否确认解锁用户"' + username + '"数据项?')
-        .then(function () {
-            return unlockLogininfor(username);
-        })
-        .then(() => {
-            proxy!.$modal.msgSuccess('用户' + username + '解锁成功');
-        });
-    //   .catch(() => {});
+    }).catch(() => { });
 }
 /** 导出按钮操作 */
 function handleExport() {
-    proxy!.download(
-        'monitor/logininfor/export',
-        {
-            ...queryParams.value,
-        },
-        `config_${new Date().getTime()}.xlsx`
-    );
+    proxy?.download('system/logininfor/export', {
+        ...queryParams.value
+    }, `logininfor_${new Date().getTime()}.xlsx`)
 }
-
-getList();
 </script>
+  
+  

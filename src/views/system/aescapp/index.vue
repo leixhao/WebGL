@@ -71,7 +71,7 @@
 
       <el-table-column :label="t('aescapp.enable')" align="left" prop="enable" width="120" :show-overflow-tooltip="true">
         <template #default="scope">
-          <span>{{ scope.row.enable ? "是" : "否" }}</span>
+          <span>{{ scope.row.enable ? "否" : "是" }}</span>
         </template>
       </el-table-column>
 
@@ -81,12 +81,12 @@
         </template>
       </el-table-column>
       <el-table-column :label="t('public.createBy')" prop="createBy" width="150" />
-      <el-table-column :label="$t('user.status')" align="center" key="status" width="150">
+      <!-- <el-table-column :label="$t('user.status')" align="center" key="status" width="150">
         <template #default="scope">
           <el-switch v-model="scope.row.status" active-value="0" inactive-value="1"
             @change="handleStatusChange(scope.row)"></el-switch>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column :label="t('public.action')" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button size="small" type="primary" link icon="Edit" @click="handleUpdate(scope.row)">{{ t("button.edit")
