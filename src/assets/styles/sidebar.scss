@@ -46,7 +46,7 @@
 
     &.has-logo {
       .el-scrollbar {
-        height: calc(100% - 50px);
+        height: calc(100% - 200px);
       }
     }
 
@@ -61,7 +61,7 @@
     }
 
     .svg-icon {
-      margin-right: 16px;
+      margin-right: 12px;
     }
 
     .el-menu {
@@ -75,7 +75,48 @@
       text-overflow: ellipsis !important;
       white-space: nowrap !important;
     }
-
+    $el-menu-item-height:38px;
+    $el-menu-item-color:#313a4b;
+    $el-menu-item-bgColor:#313a4b;
+    $el-menu-item-color-active:#555;
+    $el-menu-item-bgColor-active:#bbb;
+    .el-sub-menu__title{
+        height:$el-menu-item-height;
+        line-height:$el-menu-item-height;
+    }
+    .el-menu-item{
+        background:#313a4b !important;
+        height:$el-menu-item-height;
+        line-height:$el-menu-item-height;
+        color:  $el-menu-item-bgColor-active;
+        // .svg-icon{
+        //     display:none;
+        // }
+        &:hover{
+            background-color: $el-menu-item-bgColor-active !important;
+            color: $el-menu-item-color;
+        }
+        &.is-active{
+                background-color: $el-menu-item-bgColor-active !important;
+                color:$el-menu-item-color-active;
+            &:hover{
+                background-color: #aaa !important;
+            }
+        }
+    }
+    .sub-menu-title-noDropdown{
+        color:$el-menu-item-bgColor-active;
+        .svg-icon{
+            display:inline-block;
+        }
+        &:hover{
+            background-color: #e5e5e5 !important;
+            color: #e2e2e2;
+        }
+        &.is-active{
+            color:$el-menu-item-color-active
+        }
+    }
     .el-menu-item .el-menu-tooltip__trigger {
       display: inline-block !important;
     }
@@ -87,9 +128,12 @@
         background-color: rgba(0, 0, 0, 0.06) !important;
       }
     }
-
+    & .theme-dark  .el-sub-menu__title{
+        color:$el-menu-item-bgColor-active !important;
+        background: #3d4450 !important;
+    }
     & .theme-dark .is-active > .el-sub-menu__title {
-      color: $base-menu-color-active !important;
+      color:$el-menu-item-bgColor-active !important;
     }
 
     & .nest-menu .el-sub-menu>.el-sub-menu__title,
@@ -97,16 +141,16 @@
       min-width: $base-sidebar-width !important;
 
       &:hover {
-        background-color: rgba(0, 0, 0, 0.06) !important;
+        background-color: rgba(0, 0, 0, 0.06);
       }
     }
 
     & .theme-dark .nest-menu .el-sub-menu>.el-sub-menu__title,
     & .theme-dark .el-sub-menu .el-menu-item {
-      background-color: $base-sub-menu-background !important;
+      background-color: $base-sub-menu-background ;
 
       &:hover {
-        background-color: $base-sub-menu-hover !important;
+        background-color: $base-sub-menu-hover;
       }
     }
   }

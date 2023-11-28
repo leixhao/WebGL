@@ -28,79 +28,105 @@
 </template>
 
 <script setup lang="ts">
-import { isExternal } from '@/utils/validate';
-import AppLink from './Link.vue';
-import { getNormalPath } from '@/utils/ruoyi';
-// import subMenu from 'element-plus/es/components/menu/src/sub-menu';
-// import item from 'element-plus/es/components/space/src/item';
-import { ref } from 'vue';
+    import { isExternal } from '@/utils/validate';
+    import AppLink from './Link.vue';
+    import { getNormalPath } from '@/utils/ruoyi';
+    // import subMenu from 'element-plus/es/components/menu/src/sub-menu';
+    // import item from 'element-plus/es/components/space/src/item';
+    import { ref } from 'vue';
 
-const props = defineProps({
-    // route object
-    item: {
-        type: Object,
-        required: true,
-    },
-    isNest: {
-        type: Boolean,
-        default: false,
-    },
-    basePath: {
-        type: String,
-        default: '',
-    },
-});
-
-const onlyOneChild = ref<any>({});
-
-function hasOneShowingChild(children: any[] = [], parent: any) {
-    if (!children) {
-        children = [];
-    }
-    const showingChildren = children.filter(item => {
-        if (item.hidden) {
-            return false;
-        } else {
-            // Temp set(will be used if only has one showing child)
-            onlyOneChild.value = item;
-            return true;
-        }
+    const props = defineProps({
+        // route object
+        item: {
+            type: Object,
+            required: true,
+        },
+        isNest: {
+            type: Boolean,
+            default: false,
+        },
+        basePath: {
+            type: String,
+            default: '',
+        },
     });
 
-    // When there is only one child router, the child router is displayed by default
-    if (showingChildren.length === 1) {
-        return true;
+    const onlyOneChild = ref<any>({});
+
+    function hasOneShowingChild(children : any[] = [], parent : any) {
+        if (!children) {
+            children = [];
+        }
+        const showingChildren = children.filter(item => {
+            if (item.hidden) {
+                return false;
+            } else {
+                // Temp set(will be used if only has one showing child)
+                onlyOneChild.value = item;
+                return true;
+            }
+        });
+
+        // When there is only one child router, the child router is displayed by default
+        if (showingChildren.length === 1) {
+            return true;
+        }
+
+        // Show parent if there are no child router to display
+        if (showingChildren.length === 0) {
+            onlyOneChild.value = { ...parent, path: '', noShowingChildren: true };
+            return true;
+        }
+
+        return false;
     }
 
-    // Show parent if there are no child router to display
-    if (showingChildren.length === 0) {
-        onlyOneChild.value = { ...parent, path: '', noShowingChildren: true };
-        return true;
+    function resolvePath(routePath : any, routeQuery ?: any) {
+        if (isExternal(routePath)) {
+            return routePath;
+        }
+        if (isExternal(props.basePath)) {
+            return props.basePath;
+        }
+        if (routeQuery) {
+            let query = JSON.parse(routeQuery);
+            // return { path: getNormalPath(props.basePath + '/' + routePath), query: query };
+            return { path: getNormalPath(props.basePath, routePath), query: query };
+        }
+        return getNormalPath(props.basePath, routePath);
     }
 
-    return false;
-}
-
-function resolvePath(routePath: any, routeQuery?: any) {
-    if (isExternal(routePath)) {
-        return routePath;
+    function hasTitle(title : any) {
+        if (title.length > 5) {
+            return title;
+        } else {
+            return '';
+        }
     }
-    if (isExternal(props.basePath)) {
-        return props.basePath;
-    }
-    if (routeQuery) {
-        let query = JSON.parse(routeQuery);
-        // return { path: getNormalPath(props.basePath + '/' + routePath), query: query };
-        return { path: getNormalPath(props.basePath, routePath), query: query };
-    }
-    return getNormalPath(props.basePath, routePath);
-}
-
-function hasTitle(title: any) {
-    if (title.length > 5) {
-        return title;
-    } else {
-        return '';
-    }
-}
 </script>
+<style lang="scss" scoped>
+    $el-menu-item-height: 38px;
+    $el-menu-item-color: #313a4b;
+    $el-menu-item-bgColor: #313a4b;
+    $el-menu-item-color-active: #555;
+    $el-menu-item-bgColor-active: #bbb;
+
+    .el-menu-item {
+        height: $el-menu-item-height;
+        line-height: $el-menu-item-height;
+
+        &:hover {
+            background-color: $el-menu-item-bgColor-active !important;
+            color: $el-menu-item-color;
+        }
+
+        &.is-active {
+            background-color: $el-menu-item-bgColor-active !important;
+            color: $el-menu-item-color-active;
+
+            &:hover {
+                background-color: #aaa !important;
+            }
+        }
+    }
+</style>
