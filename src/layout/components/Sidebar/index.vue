@@ -1,9 +1,9 @@
 <template>
-    <div :class="{ 'has-logo': showLogo }" :style="{
+    <div :class="{'has-logo': showLogo}" :style="{
         backgroundColor:
             sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground,
     }">
-        <logo v-if="showLogo" :collapse="isCollapse" />
+        <logo v-if="showLogo" :class="{'light':sideTheme !== 'theme-dark'}" :collapse="isCollapse" />
         <el-scrollbar :class="sideTheme" wrap-class="scrollbar-wrapper">
             <el-menu :default-active="activeMenu" :collapse="isCollapse" :background-color="sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground
                 " :text-color="sideTheme === 'theme-dark' ? variables.menuColor : variables.menuLightColor"
@@ -13,7 +13,7 @@
             </el-menu>
         </el-scrollbar>
         <!-- 配置中心 版本等 -->
-        <SubMenu></SubMenu>
+        <SubMenu :class="sideTheme === 'theme-dark'?'dark':'light'"></SubMenu>
     </div>
 </template>
 
