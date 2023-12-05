@@ -46,9 +46,6 @@ const from = ref({
   appId: null
 })
 const sideTheme = computed(() => settingsStore.sideTheme);
-const backSys = () => {
-  window.location.href = window.location.origin + "/aesc/systemManage";
-}
 function handleSelect(value) {
   regenerate(value).then((response) => {
     appList.value.forEach((el) => {

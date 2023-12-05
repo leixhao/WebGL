@@ -18,3 +18,4 @@ tests/**/coverage/
 yarn*
 components.d.ts
 auto-imports.d.ts
+stats.html

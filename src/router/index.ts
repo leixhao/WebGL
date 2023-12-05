@@ -56,11 +56,6 @@ export const constantRoutes: RouteRecordRaw[] = [
         ],
     },
     {
-        path: '/systemManage',
-        component: () => import('@/views/systemManage/index.vue'),
-        hidden: true
-    },
-    {
         path: '/login',
         component: () => import('@/views/login.vue'),
         hidden: true,
