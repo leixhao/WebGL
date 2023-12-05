@@ -130,7 +130,7 @@
     }
     & .theme-dark  .el-sub-menu__title{
         color:$el-menu-item-bgColor-active !important;
-        background: #3d4450 !important;
+        background: $el-menu-item-color !important;
     }
     & .theme-dark .is-active > .el-sub-menu__title {
       color:$el-menu-item-bgColor-active !important;
