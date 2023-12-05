@@ -51,8 +51,11 @@ export function parseTime(time: any, pattern?: string) {
 
 // 表单重置
 export function resetForm(refName: string) {
-    if (this.$refs[refName]) {
-        this.$refs[refName].resetFields();
+    // ts取消行规则
+    // @ts-ignore
+    let _this = this;
+    if (_this.$refs[refName]) {
+        _this.$refs[refName].resetFields();
     }
 }
 
@@ -238,7 +241,7 @@ export function tansParams(params: any) {
 
 // 返回项目路径
 // export function getNormalPath(p: any) {
-export function getNormalPath(basePath: any, routePath:any) {
+export function getNormalPath(basePath: any, routePath: any) {
     const p = basePath + '/' + routePath;
     if (p.length === 0 || !p || p === 'undefined') {
         return p;
@@ -247,7 +250,7 @@ export function getNormalPath(basePath: any, routePath:any) {
     if (res[res.length - 1] === '/') {
         return res.slice(0, res.length - 1);
     }
-    if(routePath?.length > 0 && routePath?.indexOf('/') === 0){
+    if (routePath?.length > 0 && routePath?.indexOf('/') === 0) {
         return routePath;
     }
     return res;

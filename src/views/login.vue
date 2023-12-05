@@ -101,7 +101,7 @@ function handleLogin() {
       console.log(toRaw(loginForm.value))
       // debugger
       userStore.ADlogin(loginForm.value).then(() => {
-        router.push({ path: redirect.value || "/systemManage" });
+        router.push({ path: redirect.value || "/index" });
       }).catch(() => {
         loading.value = false;
         // 重新获取验证码

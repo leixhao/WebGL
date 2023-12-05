@@ -1,7 +1,6 @@
 import { createWebHistory, createRouter, RouteRecordRaw } from 'vue-router';
 /* Layout */
 import Layout from '@/layout/index.vue';
-import { messageRoutes } from './messageRouter'
 
 /**
  * Note: 路由配置项
@@ -57,9 +56,9 @@ export const constantRoutes: RouteRecordRaw[] = [
         ],
     },
     {
-        path:'/systemManage',
+        path: '/systemManage',
         component: () => import('@/views/systemManage/index.vue'),
-        hidden:true
+        hidden: true
     },
     {
         path: '/login',
@@ -91,6 +90,26 @@ export const constantRoutes: RouteRecordRaw[] = [
                 component: () => import('@/views/index.vue'),
                 name: 'Index',
                 meta: { title: '首页', icon: 'dashboard', affix: true },
+            },
+        ],
+    },
+    {
+        path: '/template',
+        hidden: false,
+        component: Layout,
+        meta: { title: '模板管理', icon: 'dashboard'},
+        children: [
+            {
+                path: '/matrix',
+                component: () => import('@/views/template/matrix/index.vue'),
+                name: 'matrix',
+                meta: { title: '变更矩阵', icon: 'dashboard' },
+            },
+            {
+                path: '/chePro',
+                component: () => import('@/views/template/chePro/index.vue'),
+                name: 'chePro',
+                meta: { title: '变更流程', icon: 'dashboard' },
             },
         ],
     },
@@ -233,9 +252,9 @@ export const dynamicRoutes: RouteRecordRaw[] = [
         ],
     },
 ];
-
+// console.log(import.meta.env)
 const router = createRouter({
-    history: createWebHistory('/aesc/'),
+    history: createWebHistory(import.meta.env.VITE_APP_TITLE),
     routes: constantRoutes,
     scrollBehavior(to, from, savedPosition) {
         if (savedPosition) {
