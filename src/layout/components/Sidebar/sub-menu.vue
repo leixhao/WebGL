@@ -65,6 +65,18 @@
             }
         }
 
+        &.light {
+            color: #000000b3;
+
+            ul {
+                li {
+                    &:hover {
+                        color: #000000ff;
+                    }
+                }
+            }
+        }
+
         .versions {
             margin-top: 5px;
             line-height: 30px;

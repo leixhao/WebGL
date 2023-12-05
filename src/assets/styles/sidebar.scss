@@ -74,6 +74,7 @@
       overflow: hidden !important;
       text-overflow: ellipsis !important;
       white-space: nowrap !important;
+<<<<<<< HEAD
     }
     $el-menu-item-height:38px;
     $el-menu-item-color:#313a4b;
@@ -116,12 +117,56 @@
         &.is-active{
             color:$el-menu-item-color-active
         }
+=======
+    }
+        $el-menu-item-height:38px;//菜单 item行高
+        $el-menu-item-color:#313a4b;//hover active 字体颜色 or 正常 背景色
+        $el-menu-item-bgColor-active:#bbb;
+        $el-menu-item-bgColor-hover:#1e232a;
+        $el-menu-item-hover:#ccc;
+    // 暗色背景 菜单
+    .theme-dark{
+        .el-sub-menu__title{
+            height:$el-menu-item-height;
+            line-height:$el-menu-item-height;
+            color:  $el-menu-item-bgColor-active !important;
+        }
+        .el-menu-item{
+            background:$el-menu-item-color !important;
+            height:$el-menu-item-height;
+            line-height:$el-menu-item-height;
+            color:  $el-menu-item-bgColor-active;
+            &:hover{
+                background-color: $el-menu-item-bgColor-hover !important;
+            }
+            &.is-active{
+                    background-color: $el-menu-item-bgColor-active !important;
+                    color:$el-menu-item-color;
+            }
+        }
+        .sub-menu-title-noDropdown{
+            color:$el-menu-item-bgColor-active;
+        }
+    }
+    // 白色背景 菜单
+    .theme-light{
+    .el-sub-menu__title{
+        height:$el-menu-item-height;
+        line-height:$el-menu-item-height;
+    }
+>>>>>>> feature-v3
     }
     .el-menu-item .el-menu-tooltip__trigger {
       display: inline-block !important;
     }
+    .light{
 
+        .el-tooltip__trigger{
+            color:#2b2f3a !important;
+        }
+    }
     // menu hover
+<<<<<<< HEAD
     .sub-menu-title-noDropdown,
     .el-sub-menu__title {
       &:hover {
@@ -135,24 +180,39 @@
     & .theme-dark .is-active > .el-sub-menu__title {
       color:$el-menu-item-bgColor-active !important;
     }
+=======
+    // .sub-menu-title-noDropdown,
+    // .el-sub-menu__title {
+    //   &:hover {
+    //     background-color: rgba(0, 0, 0, 0.06) !important;
+    //   }
+    // }
+    // & .theme-dark  .el-sub-menu__title{
+    //     color:$el-menu-item-bgColor-active !important;
+    //     background: #3d4450 !important;
+    // }
+    // & .theme-dark .is-active > .el-sub-menu__title {
+    //   color:$el-menu-item-bgColor-active !important;
+    // }
+>>>>>>> feature-v3
 
-    & .nest-menu .el-sub-menu>.el-sub-menu__title,
-    & .el-sub-menu .el-menu-item {
-      min-width: $base-sidebar-width !important;
+    // & .nest-menu .el-sub-menu>.el-sub-menu__title,
+    // & .el-sub-menu .el-menu-item {
+    //   min-width: $base-sidebar-width !important;
 
-      &:hover {
-        background-color: rgba(0, 0, 0, 0.06);
-      }
-    }
+    //   &:hover {
+    //     background-color: rgba(0, 0, 0, 0.06);
+    //   }
+    // }
 
-    & .theme-dark .nest-menu .el-sub-menu>.el-sub-menu__title,
-    & .theme-dark .el-sub-menu .el-menu-item {
-      background-color: $base-sub-menu-background ;
+    // & .theme-dark .nest-menu .el-sub-menu>.el-sub-menu__title,
+    // & .theme-dark .el-sub-menu .el-menu-item {
+    //   background-color: $base-sub-menu-background ;
 
-      &:hover {
-        background-color: $base-sub-menu-hover;
-      }
-    }
+    //   &:hover {
+    //     background-color: $base-sub-menu-hover;
+    //   }
+    // }
   }
 
   .hideSidebar {
@@ -179,7 +239,6 @@
 
     .el-sub-menu {
       overflow: hidden;
-
       &>.el-sub-menu__title {
         padding: 0 !important;
 
