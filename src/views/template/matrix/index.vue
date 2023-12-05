@@ -93,13 +93,8 @@
 
 <script lang="ts" setup>
 import {
-  listTemplate,
-  getTemplateDetail,
-  delRole,
-  addTemplate,
-  updatTemplate,
-  changeTemplateStatus,
-} from "@/api/system/template";
+  getSelectList
+} from "@/api/template/matrix";
 import { getCurrentInstance, ComponentInternalInstance, ref } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus'
 import profile from './profile/index.vue'
@@ -264,7 +259,7 @@ function getList() {
       delete obj[key]
     }
   })
-  listTemplate(proxy!.addDateRange(queryParams.value, dateRange.value)).then(
+  getSelectList({}).then(
     (response: any) => {
       templateList.value = response.rows;
       total.value = response.total;
