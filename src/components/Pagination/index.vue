@@ -5,7 +5,7 @@
             v-model:page-size="pageSize"
             :background="background"
             :layout="layout"
-            :page-sizes="pageSizes"
+            :page-sizes="pageSizes as number[]"
             :pager-count="pagerCount"
             :total="total"
             @sizeChange="handleSizeChange"
@@ -78,6 +78,7 @@ const pageSize = computed({
     },
 });
 function handleSizeChange(val: number) {
+    console.log(val)
     if (currentPage.value * val > props.total) {
         currentPage.value = 1;
     }

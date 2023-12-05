@@ -191,3 +191,13 @@ aside {
 .multiselect--active {
   z-index: 1000 !important;
 }
+
+.demo-drawer__content{
+  padding: 20px 0;
+  border: 1px solid #DCDFE6;
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,.12), 0 0 6px 0 rgba(0,0,0,.04);
+}
+
+.demo-drawer__footer{
+  margin-top: 20px;
+}

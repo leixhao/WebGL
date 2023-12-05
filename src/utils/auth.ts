@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie'
 
-const TokenKey = 'SsoLoginToken'
+const TokenKey = 'ecmLoginToken'
 // const TokenKey = 'Admin-Token'
 
 const ExpiresInKey = 'Admin-Expires-In'

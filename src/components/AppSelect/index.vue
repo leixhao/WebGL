@@ -1,14 +1,14 @@
 <template>
   <div>
-    <el-tooltip class="box-item" effect="dark" content="返回选择应用" placement="bottom-start">
+    <el-tooltip class="box-item" effect="dark" placement="bottom-start">
       <div alt style="
                   cursor: pointer;
                   height: 50px;
                   line-height: 50px;
                   color: rgb(255, 255, 255);
                   text-align: center;
-                  font-size: 20px;" @click="backSys">
-        {{ title }}
+                  font-size: 20px;">
+        AESC
       </div>
     </el-tooltip>
     <!-- <el-dropdown trigger="click" class="international" @command="handleSelect">

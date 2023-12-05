@@ -157,6 +157,19 @@ export default {
         style:'Style',
         echo:'Echo Style'
     },
+    table:{
+        number: 'number',
+        name: 'name',
+        version: 'version',
+        status: 'status',
+        oner: 'oner',
+        creator: 'creator',
+        creatime: 'creatime',
+        modifiedBy: 'modifiedBy',
+        modifiedTime: 'modifiedTime',
+        remarks: 'remarks',
+        action: 'operate'
+    },
     public: {
         createBy: 'creator',
         createTime: 'Creation Time',

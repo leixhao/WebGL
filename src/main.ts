@@ -45,6 +45,7 @@ import {
 // 分页组件
 import Pagination from '@/components/Pagination/index.vue';
 // 自定义表格工具组件
+import LeftToolbar from '@/components/LeftToolbar/index.vue';
 import RightToolbar from '@/components/RightToolbar/index.vue';
 // 富文本组件
 import Editor from "@/components/Editor/index.vue"
@@ -79,6 +80,7 @@ app.component('TreeSelect', TreeSelect);
 app.component('FileUpload', FileUpload);
 app.component('ImageUpload', ImageUpload);
 app.component('ImagePreview', ImagePreview);
+app.component('LeftToolbar', LeftToolbar);
 app.component('RightToolbar', RightToolbar);
 app.component('Editor', Editor)
 

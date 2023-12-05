@@ -157,6 +157,19 @@ export default {
         style: '样式属性',
         echo: '回显'
     },
+    table:{
+        number: '编号',
+        name: '名称',
+        version: '版本',
+        status: '状态',
+        oner: '所有者',
+        creator: '创建者',
+        creatime: '创建时间',
+        modifiedBy: '修改者',
+        modifiedTime: '修改时间',
+        remarks: '备注',
+        action: '操作'
+    },
     public: {
         createBy: '创建人',
         createTime: '创建时间',

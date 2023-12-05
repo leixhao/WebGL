@@ -25,7 +25,7 @@ export default defineConfig(({ mode, command }) => {
             open: true,
             proxy: {
                 [VITE_APP_BASE_API]: {
-                    target: `http://tech-d.envision-aesc.cn`,
+                    target: `http://tech-q.envision-aesc.cn`,
                     //  http://tech-d.envision-aesc.cn/api 开发环境
                     //http://tech-q.envision-aesc.cn/api 测试环境
                     //http://tech.envision-aesc.cn/api 生产环境
