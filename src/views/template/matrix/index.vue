@@ -337,7 +337,7 @@ function handleAdd() {
 }
 /** 修改按钮操作 */
 function handleUpdate(row: any) {
-  (proxy?.$refs['profileRef'] as any).toogleShow();
+  (proxy?.$refs['profileRef'] as any)?.toogleShow();
 }
 function handleEdit() {
 
