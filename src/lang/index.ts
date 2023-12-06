@@ -20,7 +20,7 @@ const messages = {
 
 const i18n = createI18n({
   // 设置语言 选项 en | zh
-  locale: Cookies.get('language') || 'en',
+  locale: Cookies.get('language') || 'zh',
   // 设置文本内容
   messages,
   legacy: false,
