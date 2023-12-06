@@ -1,10 +1,10 @@
 // import request from '@/utils/request'
-import request from '@/utils/requestN'
+import request from '@/utils/request'
 
 //
 export function getSelectList(data: any) {
     return request({
-        url: '/matrix/selectList',
+        url: '/ecm/matrix/selectList',
         method: 'post',
         data
     })
