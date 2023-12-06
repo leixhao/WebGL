@@ -1,30 +1,42 @@
 <template>
   <div class="app-container">
     <el-row :gutter="10" class="mb20">
-      <left-toolbar v-model:showSearch="showSearch" @docAdd="handleAdd" @docDelete="handleDelete"
+      <el-col :span="20" :xs="24">
+        <el-form v-show="showSearch" @submit.prevent ref="queryRef" :model="queryParams" :inline="true">
+          <el-form-item :label="''" prop="search">
+            <el-input v-model="queryParams.search" placeholder="请输入搜索关键字" clearable style="width: 240px"
+              @keyup.enter="handleQuery" />
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" icon="Search" @click="handleQuery">{{ $t("button.search") }}</el-button>
+            <el-button icon="Refresh" @click="resetQuery">{{ $t("button.reset") }}</el-button>
+          </el-form-item>
+        </el-form>
+      </el-col>
+      <left-toolbar v-model:showSearch="showSearch" :show-export="false" :delDis="multiple" :editDis="single"
+        v-model:toogle="toogle" @docAdd="handleAdd" @docDelete="handleDelete" @docEdit="handleEdit"
         @queryTable="getList"></left-toolbar>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
-
     <el-table class="table_divClass" v-loading="loading" :data="templateList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" align="center" width="80" />
       <!-- <el-table-column label="ID"  prop="id" min-width="100" /> -->
-      <el-table-column :label="t('table.number')" prop="mtNo" min-width="150" />
+      <el-table-column :label="t('table.number')" prop="matrixNo" min-width="150" />
       <!-- <el-table-column label="应用ID"  prop="appId" min-width="280" /> -->
-      <el-table-column :label="t('table.name')" prop="type" :show-overflow-tooltip="true" min-width="100" />
-      <el-table-column :label="t('table.version')" prop="type" :show-overflow-tooltip="true" min-width="100" />
-      <el-table-column :label="t('table.status')" prop="type" :show-overflow-tooltip="true" min-width="100">
-        <template #default="scope">
+      <el-table-column :label="t('table.name')" prop="matrixName" :show-overflow-tooltip="true" min-width="100" />
+      <el-table-column :label="t('table.version')" prop="matrixRevision" :show-overflow-tooltip="true" min-width="100" />
+      <el-table-column :label="t('table.status')" prop="matrixStatus" :show-overflow-tooltip="true" min-width="100">
+        <!-- <template #default="scope">
           <span v-if="scope.row.type == '1'">邮件模板</span>
           <span v-else>企业微信模板</span>
-        </template>
+        </template> -->
       </el-table-column>
-      <el-table-column :label="t('table.creator')" prop="type" :show-overflow-tooltip="true" min-width="100" />
-      <el-table-column :label="t('table.creatime')" prop="type" :show-overflow-tooltip="true" min-width="100" />
-      <el-table-column :label="t('table.modifiedBy')" prop="type" :show-overflow-tooltip="true" min-width="100" />
-      <el-table-column :label="t('table.modifiedTime')" prop="type" :show-overflow-tooltip="true" min-width="120" />
-      <el-table-column :label="t('table.remarks')" prop="type" :show-overflow-tooltip="true" min-width="100" />
-      <el-table-column :label="t('table.action')" min-width="150" align="center" class-name="small-padding fixed-width">
+      <el-table-column :label="t('table.creator')" prop="createByName" :show-overflow-tooltip="true" min-width="100" />
+      <el-table-column :label="t('table.creatime')" prop="createTime" :show-overflow-tooltip="true" min-width="100" />
+      <el-table-column :label="t('table.modifiedBy')" prop="updateByName" :show-overflow-tooltip="true" min-width="100" />
+      <el-table-column :label="t('table.modifiedTime')" prop="updateTime" :show-overflow-tooltip="true" min-width="120" />
+      <el-table-column :label="t('table.remarks')" prop="matrixRemarks" :show-overflow-tooltip="true" min-width="100" />
+      <el-table-column :label="t('table.action')" min-width="150" fixed="right" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button size="small" link type="primary" icon="Edit" @click="handleUpdate(scope.row)">{{ $t('button.edit')
           }}</el-button>
@@ -56,7 +68,7 @@
               <span style="font-weight: 600;"><span
                   style="color: red;display: inline-block;margin-right: 5px;">*</span>主内容</span>
             </template>
-            <el-upload class="upload-demo" drag :action="APLOAD_RUL" multiple>
+            <el-upload class="upload-demo" drag :action="APLOAD_RUL" :auto-upload="false" multiple>
               <el-icon class="el-icon--upload"><upload-filled /></el-icon>
               <div class="el-upload__text">
                 将文件拖到此处，或者<em>点击上传</em>
@@ -72,7 +84,7 @@
             <template #label>
               <span style="font-weight: 600;">附件</span>
             </template>
-            <el-upload class="upload-demo" drag :action="APLOAD_RUL" multiple>
+            <el-upload class="upload-demo" drag :action="APLOAD_RUL" :auto-upload="false" multiple>
               <el-icon class="el-icon--upload"><upload-filled /></el-icon>
               <div class="el-upload__text">
                 将文件拖到此处，或者<em>点击上传</em>
@@ -105,6 +117,7 @@ const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { sys_common_status } = proxy!.useDict('sys_common_status');
 const ruleFormRef = ref<FormInstance>()
 const queryForm = ref<FormInstance>()
+const toogle = ref(false)
 const APLOAD_RUL = '/ecm/'
 const typeOptions = ref([
   {
@@ -209,11 +222,9 @@ const open = ref(false);
 const dateRange = ref([])
 // 查询参数
 const queryParams = ref({
-  mtNo: undefined,
+  search: undefined,
   pageNum: 1,
   pageSize: 10,
-  appId: undefined,
-  enable: undefined,
 })
 const stateOption = ref([
   {
@@ -300,11 +311,8 @@ function reset() {
 }
 /** 搜索按钮操作 */
 function handleQuery() {
-  queryParams.value.appId = !!queryParams.value.appId
-    ? queryParams.value.appId
-    : undefined;
-  queryParams.value.mtNo = !!queryParams.value.mtNo
-    ? queryParams.value.mtNo
+  queryParams.value.search = !!queryParams.value.search
+    ? queryParams.value.search
     : undefined;
   queryParams.value.pageNum = 1;
   getList();
@@ -330,6 +338,9 @@ function handleAdd() {
 /** 修改按钮操作 */
 function handleUpdate(row: any) {
   (proxy?.$refs['profileRef'] as any).toogleShow();
+}
+function handleEdit() {
+
 }
 /** 提交按钮 */
 const submitForm = async (formEl: FormInstance | undefined) => {
