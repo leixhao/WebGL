@@ -62,7 +62,7 @@ const { proxy } = getCurrentInstance();
 const loginForm = ref({
   username: "guang.tan",
   password: "13584149705Tg@",
-  appId: '73eb92cb757143a7850ed24d19f47f76',
+  appId: '2f64e1face5049d787a4bc9a45d0957c',
   rememberMe: false,
   code: "",
   uuid: ""
@@ -145,7 +145,7 @@ function getCookie() {
     username: username === undefined ? loginForm.value.username : username,
     password: password === undefined ? loginForm.value.password : decrypt(password),
     rememberMe: rememberMe === undefined ? false : Boolean(rememberMe),
-    appId: "73eb92cb757143a7850ed24d19f47f76"// 不同应用的appID不同
+    appId: "2f64e1face5049d787a4bc9a45d0957c"// 不同应用的appID不同
   };
   sessionStorage.setItem('appId', loginForm.value.appId)
 }
