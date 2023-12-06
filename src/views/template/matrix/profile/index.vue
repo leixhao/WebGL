@@ -1,5 +1,11 @@
 <template>
-  <el-dialog v-model="open" append-to-body>
+  <el-drawer
+    v-model="open"
+    title="I am the title"
+    append-to-body
+    :with-header="false"
+    :size="600"
+  >
     <div class="matrix-profile-content">
       <div class="profile-header">
         <div class="profile-left">
@@ -17,98 +23,217 @@
       </div>
       <div class="profile-content">
         <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
-          <el-tab-pane label="Properties" name="first">对象属性</el-tab-pane>
-          <el-tab-pane label="Relations" name="second">相关变更</el-tab-pane>
-          <el-tab-pane label="Contents/Attachments" name="third">关联文档</el-tab-pane>
-          <el-tab-pane label="Change Logs" name="fourth">
-            <div class="sort">
-              <el-tooltip content="按时间排序" placement="bottom" effect="light">
-                <el-icon @click="handleSort"><Sort /></el-icon>
-              </el-tooltip>
-            </div>
-            <el-steps direction="vertical" class="profile-steps">
-              <el-step v-for="(v, i) in stepsList" :key="i">
-                <template #icon>
-                  <div class="icon-content">
-                    <el-icon class="type-icon"><DocumentAdd /></el-icon>
-                    <img src="@/assets/images/profile.jpg" alt="" />
-                  </div>
-                </template>
-                <template #title>
-                  <span class="name">{{ v.CreateUser }}</span>
-                  {{ v.title }}
-                </template>
-                <template #description>
-                  <div class="row">
-                    <div class="subTitle">{{ v.subTitle }}</div>
-                    <div class="createTime">{{ v.createTime }}</div>
-                  </div>
-                </template>
-              </el-step>
-            </el-steps>
+          <el-tab-pane label="Properties" name="first">
+            <Form></Form>
           </el-tab-pane>
-          <el-tab-pane label="Revision" name="fifth">所有版本</el-tab-pane>
+          <el-tab-pane label="Relations" name="second">
+            <Header></Header>
+            <div class="table-container">
+              <el-table :data="tableData" border style="width: 100%">
+                <el-table-column
+                  prop="code"
+                  show-overflow-tooltip
+                  align="center"
+                  label="编号"
+                >
+                </el-table-column>
+                <el-table-column
+                  prop="name"
+                  show-overflow-tooltip
+                  align="center"
+                  label="名称"
+                />
+                <el-table-column
+                  prop="name"
+                  show-overflow-tooltip
+                  align="center"
+                  label="版本"
+                />
+                <el-table-column
+                  prop="name"
+                  show-overflow-tooltip
+                  align="center"
+                  label="阶段"
+                />
+                <el-table-column
+                  prop="name"
+                  show-overflow-tooltip
+                  align="center"
+                  label="状态"
+                />
+                <el-table-column
+                  prop="name"
+                  show-overflow-tooltip
+                  align="center"
+                  label="所有者"
+                />
+                <el-table-column
+                  prop="name"
+                  show-overflow-tooltip
+                  align="center"
+                  label="创建者"
+                />
+                <el-table-column
+                  prop="name"
+                  show-overflow-tooltip
+                  align="center"
+                  width="180"
+                  label="创建时间"
+                />
+                <el-table-column
+                  prop="name"
+                  show-overflow-tooltip
+                  align="center"
+                  label="修改者"
+                />
+                <el-table-column
+                  prop="name"
+                  show-overflow-tooltip
+                  align="center"
+                  width="180"
+                  label="修改时间"
+                />
+              </el-table>
+              <div class="page-container">
+                <el-pagination
+                  small
+                  @size-change="handleSizeChange"
+                  @current-change="handleCurrentChange"
+                  :current-page="page.currentPage"
+                  :page-sizes="[10, 20, 50, 100, 200]"
+                  :page-size="page.pageSize"
+                  layout="total, sizes, prev, pager, next,jumper"
+                  :total="page.total"
+                >
+                </el-pagination>
+              </div>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="Contents/Attachments" name="third">
+            <Associated ref="AssociatedRefs"></Associated>
+          </el-tab-pane>
+          <el-tab-pane label="Change Logs" name="fourth">
+            <Steps ref="stepRefs"></Steps>
+          </el-tab-pane>
+          <el-tab-pane label="Revision" name="fifth">
+            <Header></Header>
+            <div class="table-container">
+              <el-table :data="tableData" border style="width: 100%">
+                <el-table-column
+                  prop="code"
+                  show-overflow-tooltip
+                  align="center"
+                  label="编号"
+                >
+                </el-table-column>
+                <el-table-column
+                  prop="name"
+                  show-overflow-tooltip
+                  align="center"
+                  label="名称"
+                />
+                <el-table-column
+                  prop="name"
+                  show-overflow-tooltip
+                  align="center"
+                  label="版本"
+                />
+                <el-table-column
+                  prop="name"
+                  show-overflow-tooltip
+                  align="center"
+                  label="状态"
+                />
+                <el-table-column
+                  prop="name"
+                  show-overflow-tooltip
+                  align="center"
+                  label="所有者"
+                />
+                <el-table-column
+                  prop="name"
+                  show-overflow-tooltip
+                  align="center"
+                  label="创建者"
+                />
+                <el-table-column
+                  prop="name"
+                  show-overflow-tooltip
+                  align="center"
+                  width="180"
+                  label="创建时间"
+                />
+                <el-table-column
+                  prop="name"
+                  show-overflow-tooltip
+                  align="center"
+                  label="修改者"
+                />
+                <el-table-column
+                  prop="name"
+                  show-overflow-tooltip
+                  align="center"
+                  width="180"
+                  label="修改时间"
+                />
+                <el-table-column
+                  prop="name"
+                  show-overflow-tooltip
+                  align="center"
+                  width="200"
+                  label="备注"
+                />
+              </el-table>
+              <div class="page-container">
+                <el-pagination
+                  small
+                  @size-change="handleSizeChange"
+                  @current-change="handleCurrentChange"
+                  :current-page="page.currentPage"
+                  :page-sizes="[10, 20, 50, 100, 200]"
+                  :page-size="page.pageSize"
+                  layout="total, sizes, prev, pager, next,jumper"
+                  :total="page.total"
+                >
+                </el-pagination>
+              </div>
+            </div>
+          </el-tab-pane>
         </el-tabs>
       </div>
     </div>
-  </el-dialog>
+  </el-drawer>
 </template>
 <script lang="ts" setup>
 import { getCurrentInstance, ComponentInternalInstance, ref } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
 import { Edit, Picture, UploadFilled } from "@element-plus/icons-vue";
 import { useI18n } from "vue-i18n";
+import Form from "./../components/Form.vue";
+import Steps from "./../components/Steps.vue";
+import Associated from "./../components/Associated.vue";
+import Header from "./../components/table-header.vue";
 const { t } = useI18n();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const ruleFormRef = ref<FormInstance>();
 const queryForm = ref<FormInstance>();
 let open = ref(false);
 let activeName = ref("first");
-const stepsList = ref([
-  {
-    icon: "",
-    avatar: "",
-    CreateUser: "san.zhang",
-    title: "创建 文档",
-    subTitle: "创建【AESCGL-6.7.1-FR-01,文档名称】",
-    createTime: "2023/08/21 15:26:10",
-  },
-  {
-    icon: "",
-    avatar: "",
-    CreateUser: "si.li",
-    title: "编辑 文档",
-    subTitle:
-      '编辑【AESCGL-6.7.1-FR-01,文档名称】 from "文档名称" to "Change Feasibility Assessement List"',
-    createTime: "2023/09/11 08:23:53",
-  },
-  {
-    icon: "",
-    avatar: "",
-    CreateUser: "wu.wang",
-    title: "编辑 文档",
-    subTitle:
-      '编辑【AESCGL-6.7.1-FR-01,文档名称】 from "文档名称" to "Change Feasibility Assessement List"',
-    createTime: "2023/11/09 12:43:23",
-  },
-
-  {
-    icon: "",
-    avatar: "",
-    CreateUser: "wu.wang",
-    title: "编辑 文档",
-    subTitle:
-      '编辑【AESCGL-6.7.1-FR-01,文档名称】 from "文档名称" to "Change Feasibility Assessement List"',
-    createTime: "2023/11/09 12:43:23",
-  },
-]);
 function toogleShow() {
   open.value = !open.value;
 }
-function handleSort(){
-  stepsList.value=stepsList.value.reverse();
+const page = ref({
+  currentPage: 1,
+  pageSize: 20,
+  total: 0,
+});
+const stepRefs = ref(null);
+const tableData = ref([]);
+function handleClick(tab: object) {
+  console.log(tab);
 }
-function handleClick() {}
+function handleSizeChange(e: number) {}
+function handleCurrentChange(e: number) {}
 defineExpose({
   toogleShow,
 });
@@ -116,6 +241,7 @@ defineExpose({
 <style scoped lang="scss">
 .matrix-profile-content {
   padding: 0 10px;
+  height: 100%;
 
   .profile-header {
     display: flex;
@@ -151,68 +277,16 @@ defineExpose({
       }
     }
   }
-  .sort {
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: flex-end;
-    .el-icon {
-      font-size: 18px;
-      color: #656565;
-      cursor: pointer;
-    }
-  }
   .profile-content {
     padding: 10px;
-
-    .profile-steps {
-      padding: 0 30px;
-      :deep(.el-step__icon) {
-        height: 28px;
-      }
-      .icon-content {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        .type-icon {
-          // margin-right: 10px;
-          position: absolute;
-          left:-25px;
-          top:4px;
-          z-index: 2;
-          font-size: 20px;
-          color: #999;
+    height: calc(100% - 60px);
+    .el-tabs {
+      height: 100%;
+      :deep(.el-tabs__content) {
+        height: calc(100% - 50px);
+        .el-tab-pane{
+          height:100%;
         }
-        img {
-          height: 30px;
-          border-radius: 50%;
-          max-width: none;
-        }
-        // .type-icon {
-        //   position: absolute;
-        //   font-size: 18px;
-        //   top:3px;
-        //   left: -20px
-        // }
-      }
-    }
-    :deep(.el-step__description) {
-      padding-right: 0%;
-    }
-    .name {
-      color: #3eacef;
-    }
-    .row {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      font-size: 13px;
-      margin: 15px 0;
-      .subTitle {
-        flex: 1;
-      }
-      .createTime {
-        width: 120px;
       }
     }
   }

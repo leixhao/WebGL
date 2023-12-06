@@ -1,6 +1,6 @@
 <template>
     <div class="editor">
-        <quill-editor v-model:content="content" contentType="html" :options="options" :style="styles" />
+        <quill-editor v-model:content="content"  contentType="html" :options="options" :style="styles" />
     </div>
 </template>
 
@@ -48,9 +48,7 @@
                 ['link', 'image', 'video'], // 链接、图片、视频
             ],
         },
-        placeholder: '请输入内容',
         readOnly: props.readOnly,
-        // theme: 'snow',
     });
     const styles = computed(() => {
         let style : any = {};
@@ -72,6 +70,13 @@
         },
         { immediate: true }
     );
+    /** 
+     * 获取富文本的值，抛出方法
+    */
+   function getContent(){
+    console.log(content.value);
+   }
+   defineExpose({ getContent });
 </script>
 
 <style>
