@@ -1,21 +1,30 @@
 <template>
     <div class="top-left-btn" :style="style">
         <el-row>
-            <el-tooltip :content="t('button.new')" placement="top">
-                <el-button circle icon="DocumentAdd" @click="handleAdd()" />
+            <el-tooltip v-if="add" :content="t('button.new')" placement="top">
+                <el-button circle icon="DocumentAdd" @click="handleChange('docAdd')" />
             </el-tooltip>
-            <el-tooltip :content="t('button.delete')" placement="top">
-                <el-button circle icon="Delete" @click="handleDelete()" />
+            <el-tooltip v-if="del" :content="t('button.delete')" placement="top">
+                <el-button circle icon="Delete" :disabled="delDis" @click="handleChange('docDelete')" />
             </el-tooltip>
-            <el-tooltip v-if="search" class="item" effect="dark" :content="showSearch ? '隐藏搜索' : '显示搜索'" placement="top">
+            <el-tooltip v-if="edit" :content="t('button.edit')" placement="top">
+                <el-button circle icon="EditPen" :disabled="editDis" @click="handleChange('docEdit')" />
+            </el-tooltip>
+            <el-tooltip v-if="showSet" :content="t('button.setStatus')" placement="top">
+                <el-button circle icon="Switch" @click="handleChange('docStatus')" />
+            </el-tooltip>
+            <el-tooltip v-if="showToogle" :content="t('button.setStatus')" placement="top">
+                <el-switch :model-value="toogle" @change="handleToogle($event)" style="margin:0 10px" />
+            </el-tooltip>
+            <el-tooltip v-if="showExport" :content="t('button.setStatus')" placement="top">
+                <el-button circle icon="Upload" @click="handleChange('docExport')" />
+            </el-tooltip>
+            <!-- <el-tooltip v-if="search" class="item" effect="dark" :content="showSearch ? '隐藏搜索' : '显示搜索'" placement="top">
                 <el-button circle icon="Search" @click="toggleSearch()" />
-            </el-tooltip>
-            <el-tooltip class="item" effect="dark" content="刷新" placement="top">
-                <el-button circle icon="Refresh" @click="refresh()" />
             </el-tooltip>
             <el-tooltip v-if="columns" class="item" effect="dark" content="显隐列" placement="top">
                 <el-button circle icon="Menu" @click="showColumn()" />
-            </el-tooltip>
+            </el-tooltip> -->
         </el-row>
         <el-dialog v-model="open" :title="title" append-to-body>
             <el-transfer v-model="value" :titles="['显示', '隐藏']" :data="columns" @change="dataChange"></el-transfer>
@@ -24,11 +33,48 @@
 </template>
 
 <script setup lang="ts">
+import { type } from 'os';
 import { ref, computed } from 'vue';
 import { useI18n } from "vue-i18n";
 const { t } = useI18n()
 
 const props = defineProps({
+    add: {
+        type: Boolean,
+        default: true,
+    },
+    del: {
+        type: Boolean,
+        default: true,
+    },
+    edit: {
+        type: Boolean,
+        default: true,
+    },
+    delDis: {
+        type: Boolean,
+        default: true,
+    },
+    editDis: {
+        type: Boolean,
+        default: true,
+    },
+    showSet: {
+        type: Boolean,
+        default: true,
+    },
+    toogle: {
+        type: Boolean,
+        default: true,
+    },
+    showToogle: {
+        type: Boolean,
+        default: true,
+    },
+    showExport: {
+        type: Boolean,
+        default: true,
+    },
     showSearch: {
         type: Boolean,
         default: true,
@@ -46,7 +92,7 @@ const props = defineProps({
     },
 });
 
-const emits = defineEmits(['update:showSearch', 'docAdd', 'docDelete', 'queryTable']);
+const emits = defineEmits(['update:showSearch', 'update:toogle', 'docAdd', 'docDelete', 'docEdit', 'docStatus', 'docExport', 'queryTable']);
 
 // 显隐数据
 const value = ref<any[]>([]);
@@ -54,7 +100,7 @@ const value = ref<any[]>([]);
 const title = ref('显示/隐藏');
 // 是否显示弹出层
 const open = ref(false);
-
+// const toogle = ref(true)
 const style = computed(() => {
     const ret: any = {};
     if (props.gutter) {
@@ -62,6 +108,14 @@ const style = computed(() => {
     }
     return ret;
 });
+
+// 事件
+function handleChange(type: any) {
+    emits(type)
+}
+function handleToogle(val: any) {
+    emits('update:toogle', val)
+}
 
 // 新增
 function handleAdd() {

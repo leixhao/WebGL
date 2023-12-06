@@ -32,7 +32,8 @@ export default {
         remove:"clear",
         off:"close",
         refreshCache:'Refresh Cache',
-        detail:'detail'
+        detail:'detail',
+        setStatus: 'Set Status'
     },
     tips:{
         tips:'Tips',

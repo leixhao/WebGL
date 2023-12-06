@@ -249,7 +249,7 @@ export const dynamicRoutes: RouteRecordRaw[] = [
 ];
 // console.log(import.meta.env)
 const router = createRouter({
-    history: createWebHistory(import.meta.env.VITE_APP_TITLE),
+    history: createWebHistory('/ecm/'),
     routes: constantRoutes,
     scrollBehavior(to, from, savedPosition) {
         if (savedPosition) {

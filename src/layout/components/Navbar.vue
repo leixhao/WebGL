@@ -95,7 +95,7 @@ function logout() {
     })
         .then(() => {
             userStore.logOut().then(() => {
-                location.href = '/index';
+                location.href = '/ecm/index';
             });
         })
     // .catch(() => {});

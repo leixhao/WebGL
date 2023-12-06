@@ -36,19 +36,19 @@ export default defineConfig(({ mode, command }) => {
           target: `http://tech-d.envision-aesc.cn`,
           // target: `http://10.206.121.15:32471/`,
           //  http://tech-d.envision-aesc.cn/api 开发环境
-          //http://tech-q.envision-aesc.cn/api 测试环境
+          //http://tech-q.envision-aesc.cn/api 测试境
           //http://tech.envision-aesc.cn/api 生产环境
           changeOrigin: true,
           rewrite: p => p.replace(/^\/[VITE_APP_BASE_API:]/, '/api')
         },
-        '/dev': {
+        '/ecm-api': {
           // target: `http://tech-d.envision-aesc.cn`,
           target: `http://10.206.121.15:32471/`,
           //  http://tech-d.envision-aesc.cn/api 开发环境
           //http://tech-q.envision-aesc.cn/api 测试环境
           //http://tech.envision-aesc.cn/api 生产环境
           changeOrigin: true,
-          rewrite: p => p.replace('/dev', '/')
+          rewrite: p => p.replace('/ecm-api', '/')
         },
       },
     },
