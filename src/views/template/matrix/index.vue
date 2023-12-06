@@ -18,11 +18,58 @@
         @queryTable="getList"></left-toolbar>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
-    <el-table class="table_divClass" v-loading="loading" :data="templateList" @selection-change="handleSelectionChange">
+    <el-table class="parentTable" v-loading="loading" :default-expand-all="true" :data="templateList"
+      @selection-change="handleSelectionChange">
       <el-table-column type="selection" align="center" width="80" />
-      <!-- <el-table-column label="ID"  prop="id" min-width="100" /> -->
-      <el-table-column :label="t('table.number')" prop="matrixNo" min-width="150" />
-      <!-- <el-table-column label="应用ID"  prop="appId" min-width="280" /> -->
+      <el-table-column v-if="!toogle" :label="t('table.number')" prop="matrixNo" min-width="150" />
+      <el-table-column v-if="toogle" type="expand">
+        <template #default="scope">
+          <div v-if="!toogle">
+            {{ scope.row.matrixNo }}
+          </div>
+          <div v-else>
+            <div class="conWrap"
+              style="text-align: left;line-height: 16px;font-size: 14px;position: relative;top: -10px;">
+              <span>版本号{{ scope.row.title }}</span>
+              <span style="margin-left:42px;">创建时间：{{ scope.row.creatime }}</span>
+            </div>
+            <el-table stripe :show-header="false" class="childTable" :default-expand-all="true" :data="scope.row.children"
+              @selection-change="handleSelectionChange">
+              <el-table-column type="selection" align="center" width="80" />
+              <el-table-column :label="t('table.number')" prop="matrixNo" min-width="150">
+
+              </el-table-column>
+              <el-table-column :label="t('table.name')" prop="matrixName" :show-overflow-tooltip="true" min-width="100" />
+              <el-table-column :label="t('table.version')" prop="matrixRevision" :show-overflow-tooltip="true"
+                min-width="100" />
+              <el-table-column :label="t('table.status')" prop="matrixStatus" :show-overflow-tooltip="true"
+                min-width="100">
+              </el-table-column>
+              <el-table-column :label="t('table.creator')" prop="createByName" :show-overflow-tooltip="true"
+                min-width="100" />
+              <el-table-column :label="t('table.creatime')" prop="createTime" :show-overflow-tooltip="true"
+                min-width="100" />
+              <el-table-column :label="t('table.modifiedBy')" prop="updateByName" :show-overflow-tooltip="true"
+                min-width="100" />
+              <el-table-column :label="t('table.modifiedTime')" prop="updateTime" :show-overflow-tooltip="true"
+                min-width="120" />
+              <el-table-column :label="t('table.remarks')" prop="matrixRemarks" :show-overflow-tooltip="true"
+                min-width="100" />
+              <el-table-column :label="t('table.action')" min-width="150" fixed="right" align="center"
+                class-name="small-padding fixed-width">
+                <template #default="scope">
+                  <el-button size="small" link type="primary" icon="Edit" @click="handleUpdate(scope.row)">{{
+                    $t('button.edit')
+                  }}</el-button>
+                  <el-button size="small" link type="primary" icon="Delete" @click="handleDelete(scope.row)">{{
+                    $t('button.delete')
+                  }}</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column :label="t('table.name')" prop="matrixName" :show-overflow-tooltip="true" min-width="100" />
       <el-table-column :label="t('table.version')" prop="matrixRevision" :show-overflow-tooltip="true" min-width="100" />
       <el-table-column :label="t('table.status')" prop="matrixStatus" :show-overflow-tooltip="true" min-width="100">
@@ -36,7 +83,10 @@
       <el-table-column :label="t('table.modifiedBy')" prop="updateByName" :show-overflow-tooltip="true" min-width="100" />
       <el-table-column :label="t('table.modifiedTime')" prop="updateTime" :show-overflow-tooltip="true" min-width="120" />
       <el-table-column :label="t('table.remarks')" prop="matrixRemarks" :show-overflow-tooltip="true" min-width="100" />
-      <el-table-column :label="t('table.action')" min-width="150" fixed="right" align="center" class-name="small-padding fixed-width">
+      <el-table-column v-if="toogle" :label="t('table.action')" min-width="150" fixed="right" align="center"
+        class-name="small-padding fixed-width" />
+      <el-table-column v-if="!toogle" :label="t('table.action')" min-width="150" fixed="right" align="center"
+        class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button size="small" link type="primary" icon="Edit" @click="handleUpdate(scope.row)">{{ $t('button.edit')
           }}</el-button>
@@ -51,7 +101,7 @@
       @pagination="getList" />
 
     <!-- 添加或修改角色配置对话框 -->
-    <el-dialog :title="title" v-model="open" center append-to-body>
+    <el-dialog :title="title" v-model="open" append-to-body>
       <div class="demo-drawer__content">
         <el-form class="m20" ref="ruleFormRef" :model="rulesForm" :rules="rules" label-width="120px">
           <el-form-item label="对应类型" prop="typeValue">
@@ -107,10 +157,11 @@
 import {
   getSelectList
 } from "@/api/template/matrix";
-import { getCurrentInstance, ComponentInternalInstance, ref } from 'vue';
+import { getCurrentInstance, ComponentInternalInstance, ref, watch } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus'
 import profile from './profile/index.vue'
 import { useI18n } from "vue-i18n";
+import { object } from "webidl-conversions";
 const { t } = useI18n()
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -199,7 +250,7 @@ const typeData = [
       },
     ]
   }]
-const templateList = ref([]);
+const templateList = ref<any[]>([]);
 // 遮罩层
 const loading = ref(true);
 // 选中数组
@@ -258,6 +309,43 @@ const rules = ref({
 })
 getList()
 
+watch(
+  toogle, (newVal, oldVal) => {
+    if (newVal) {
+      // let hasP = templateList.value.filter((item: any) => {
+      //   return item.matrixName?.indexOf('p') > -1
+      // })
+      let hasp = templateList.value.reduce((result: any, item) => {
+        const key = item['matrixRevision'];
+        if (!result[key]) {
+          result[key] = [];
+        }
+        result[key].push(item);
+        return result;
+      }, {});
+      console.log(hasp)
+      let newArr = [];
+      for (const key in hasp) {
+        if (Object.prototype.hasOwnProperty.call(hasp, key)) {
+          const element = hasp[key];
+          newArr.push({
+            title: key,
+            children: element
+          })
+        }
+      }
+      console.log(newArr)
+      templateList.value = newArr;
+    } else {
+      const newArr: any = []
+      templateList.value.map(item => {
+        newArr.push(...item.children)
+      })
+      console.log(newArr)
+      templateList.value = newArr
+    }
+  }
+)
 interface NObject {
   [key: string]: string | number | undefined | null | void
 }
@@ -340,7 +428,7 @@ function handleUpdate(row: any) {
   (proxy?.$refs['profileRef'] as any)?.toogleShow();
 }
 function handleEdit() {
-
+  console.log(ids.value)
 }
 /** 提交按钮 */
 const submitForm = async (formEl: FormInstance | undefined) => {
@@ -394,5 +482,112 @@ function handleDelete(row: any) {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+}
+
+.el-table {
+  border-top: none !important;
+}
+
+.el-table__expanded-cell {
+  padding: 0 !important;
+}
+
+.tableWrap {
+  width: 100%;
+}
+
+.el-tabs__nav-scroll {
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.tableWrap .el-table {
+  width: 1240px;
+  margin: 0 auto;
+}
+
+.el-icon.el-icon-arrow-right {
+  color: #fff;
+}
+
+.el-table__row.expanded {
+  background: #fff !important;
+  position: relative !important;
+  top: -100px !important;
+  border: 1px solid red;
+}
+
+.el-tabs__content {
+  display: none;
+}
+
+.el-table__row.expanded>td {
+  padding: 7px 0;
+}
+
+.el-table__row.expanded {
+  border: 1px solid #E5E5E5;
+}
+
+.el-table__row.expanded:first-child {
+  border-bottom: none;
+}
+
+.childTable .el-table__body {
+  border-top: 1px solid #E5E5E5;
+}
+
+.childTable .el-table__row.expanded>td:first-child {
+  border-left: 1px solid #E5E5E5;
+}
+
+.childTable .el-table__row.expanded>td:last-child {
+  border-right: 1px solid #E5E5E5;
+}
+
+.el-tabs__header.is-top {
+  border-bottom: none;
+}
+
+.childTable .el-table__header-wrapper {
+  display: none;
+}
+
+.conWrap {
+  height: 44px;
+  background: #E5E5E5;
+  line-height: 44px;
+  padding-left: 10px;
+  font-size: 14px;
+  font-family: Microsoft YaHei;
+  line-height: 19px;
+  color: #333333;
+}
+
+.conWrap>span {
+  line-height: 44px;
+}
+
+.el-table .has-gutter .is-leaf {
+  position: relative !important;
+  left: -48px !important;
+}
+
+.el-table .has-gutter .is-leaf:last-child {
+  position: relative !important;
+  left: 0px !important;
+}
+
+.el-table__header-wrapper {
+  background: #EBEBEB;
+}
+
+.el-table .has-gutter>tr>th {
+  background: #EBEBEB;
+  font-size: 14px;
+  font-family: Microsoft YaHei;
+  font-weight: bold;
+  line-height: 19px;
+  color: #333333;
 }
 </style>
