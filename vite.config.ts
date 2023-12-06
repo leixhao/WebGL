@@ -23,7 +23,7 @@ export default defineConfig(({ mode, command }) => {
     // assetsDir: 'static',
     // 是否开启eslint保存检测，有效值：ture | false | 'error'
     //例如 https://www.ruoyi.vip/。如果应用被部署在一个子路径上，你就需要用这个选项指定这个子路径。例如，如果你的应用被部署在 https://www.ruoyi.vip/admin/，则设置 baseUrl 为 /admin/
-    // base: '/ecm/',
+    base: '/ecm/',
     lintOnSave: !NODE_ENV,
     // 如果你不需要生产环境的 source map，可以将其设置为 false 以加速生产环境构建。
     productionSourceMap: false,
