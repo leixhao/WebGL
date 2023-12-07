@@ -1,105 +1,103 @@
 <template>
   <div class="app-container">
-    <el-row :gutter="10" class="mb20">
-      <el-col :span="20" :xs="24">
-        <el-form v-show="showSearch" @submit.prevent ref="queryRef" :model="queryParams" :inline="true">
-          <el-form-item :label="''" prop="search">
-            <el-input v-model="queryParams.search" placeholder="请输入搜索关键字" clearable style="width: 240px"
-              @keyup.enter="handleQuery" />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" icon="Search" @click="handleQuery">{{ $t("button.search") }}</el-button>
-            <el-button icon="Refresh" @click="resetQuery">{{ $t("button.reset") }}</el-button>
-          </el-form-item>
-        </el-form>
-      </el-col>
-      <left-toolbar v-model:showSearch="showSearch" :show-export="false" :delDis="multiple" :editDis="single"
-        v-model:toogle="toogle" @docAdd="handleAdd" @docDelete="handleDelete" @docEdit="handleEdit"
-        @queryTable="getList"></left-toolbar>
-      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
-    <el-table class="parentTable" v-loading="loading" :default-expand-all="true" :data="templateList"
-      @selection-change="handleSelectionChange">
-      <el-table-column type="selection" align="center" width="80" />
-      <el-table-column v-if="!toogle" :label="t('table.number')" prop="matrixNo" min-width="150" />
-      <el-table-column v-if="toogle" type="expand">
-        <template #default="scope">
-          <div v-if="!toogle">
-            {{ scope.row.matrixNo }}
-          </div>
-          <div v-else>
-            <div class="conWrap"
-              style="text-align: left;line-height: 16px;font-size: 14px;position: relative;top: -10px;">
-              <span>版本号{{ scope.row.title }}</span>
-              <span style="margin-left:42px;">创建时间：{{ scope.row.creatime }}</span>
+    <div class="container-left">
+      <el-row :gutter="10" class="mb20">
+        <el-col :span="24" :xs="24">
+          <el-form v-show="showSearch" @submit.prevent ref="queryRef" :model="queryParams" :inline="true">
+            <el-form-item :label="''" prop="search">
+              <el-input v-model="queryParams.search" placeholder="请输入搜索关键字" clearable style="width: 240px"
+                @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" icon="Search" @click="handleQuery">{{ $t("button.search") }}</el-button>
+              <el-button icon="Refresh" @click="resetQuery">{{ $t("button.reset") }}</el-button>
+            </el-form-item>
+          </el-form>
+        </el-col>
+        <left-toolbar v-model:showSearch="showSearch" :show-export="false" :delDis="multiple" :editDis="single"
+          v-model:toogle="toogle" @docAdd="handleAdd" @docDelete="handleDelete" @docEdit="handleEdit"
+          @queryTable="getList"></left-toolbar>
+        <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+      </el-row>
+      <el-table class="parentTable" v-loading="loading" :span-method="arraySpanMethod" :default-expand-all="true"
+        :row-class-name="toogle ? 'qw' : ''" :data="templateList" @selection-change="handleSelectionChange">
+        <el-table-column v-if="toogle" type="expand">
+          <template #default="scope">
+            <div>
+              <el-table :show-header="false" :default-expand-all="true" :data="scope.row.children"
+                @selection-change="handleSelectionChange">
+                <el-table-column align="center" width="45" />
+                <el-table-column type="selection" align="center" width="80" />
+                <el-table-column :label="t('table.number')" prop="matrixNo" min-width="150">
+                </el-table-column>
+                <el-table-column :label="t('table.name')" prop="matrixName" :show-overflow-tooltip="true"
+                  min-width="100" />
+                <el-table-column :label="t('table.version')" prop="matrixRevision" :show-overflow-tooltip="true"
+                  min-width="100" />
+                <el-table-column :label="t('table.status')" prop="matrixStatus" :show-overflow-tooltip="true"
+                  min-width="100">
+                </el-table-column>
+                <el-table-column :label="t('table.creator')" prop="createByName" :show-overflow-tooltip="true"
+                  min-width="100" />
+                <el-table-column :label="t('table.creatime')" prop="createTime" :show-overflow-tooltip="true"
+                  min-width="100" />
+                <el-table-column :label="t('table.modifiedBy')" prop="updateByName" :show-overflow-tooltip="true"
+                  min-width="100" />
+                <el-table-column :label="t('table.modifiedTime')" prop="updateTime" :show-overflow-tooltip="true"
+                  min-width="120" />
+                <el-table-column :label="t('table.remarks')" prop="matrixRemarks" :show-overflow-tooltip="true"
+                  min-width="100" />
+                <el-table-column :label="t('table.action')" min-width="150" fixed="right" align="center"
+                  class-name="small-padding fixed-width">
+                  <template #default="scope">
+                    <el-button size="small" link type="primary" icon="Edit" @click="handleUpdate(scope.row)">{{
+                      $t('button.edit')
+                    }}</el-button>
+                    <el-button size="small" link type="primary" icon="Delete" @click="handleDelete(scope.row)">{{
+                      $t('button.delete')
+                    }}</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
             </div>
-            <el-table stripe :show-header="false" class="childTable" :default-expand-all="true" :data="scope.row.children"
-              @selection-change="handleSelectionChange">
-              <el-table-column type="selection" align="center" width="80" />
-              <el-table-column :label="t('table.number')" prop="matrixNo" min-width="150">
-
-              </el-table-column>
-              <el-table-column :label="t('table.name')" prop="matrixName" :show-overflow-tooltip="true" min-width="100" />
-              <el-table-column :label="t('table.version')" prop="matrixRevision" :show-overflow-tooltip="true"
-                min-width="100" />
-              <el-table-column :label="t('table.status')" prop="matrixStatus" :show-overflow-tooltip="true"
-                min-width="100">
-              </el-table-column>
-              <el-table-column :label="t('table.creator')" prop="createByName" :show-overflow-tooltip="true"
-                min-width="100" />
-              <el-table-column :label="t('table.creatime')" prop="createTime" :show-overflow-tooltip="true"
-                min-width="100" />
-              <el-table-column :label="t('table.modifiedBy')" prop="updateByName" :show-overflow-tooltip="true"
-                min-width="100" />
-              <el-table-column :label="t('table.modifiedTime')" prop="updateTime" :show-overflow-tooltip="true"
-                min-width="120" />
-              <el-table-column :label="t('table.remarks')" prop="matrixRemarks" :show-overflow-tooltip="true"
-                min-width="100" />
-              <el-table-column :label="t('table.action')" min-width="150" fixed="right" align="center"
-                class-name="small-padding fixed-width">
-                <template #default="scope">
-                  <el-button size="small" link type="primary" icon="Edit" @click="handleUpdate(scope.row)">{{
-                    $t('button.edit')
-                  }}</el-button>
-                  <el-button size="small" link type="primary" icon="Delete" @click="handleDelete(scope.row)">{{
-                    $t('button.delete')
-                  }}</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column :label="t('table.name')" prop="matrixName" :show-overflow-tooltip="true" min-width="100" />
-      <el-table-column :label="t('table.version')" prop="matrixRevision" :show-overflow-tooltip="true" min-width="100" />
-      <el-table-column :label="t('table.status')" prop="matrixStatus" :show-overflow-tooltip="true" min-width="100">
-        <!-- <template #default="scope">
+          </template>
+        </el-table-column>
+        <el-table-column type="selection" align="center" width="80" />
+        <el-table-column :label="t('table.number')" :prop="toogle ? 'title' : 'matrixNo'" min-width="150" />
+        <el-table-column :label="t('table.name')" prop="matrixName" :show-overflow-tooltip="true" min-width="100" />
+        <el-table-column :label="t('table.version')" prop="matrixRevision" :show-overflow-tooltip="true"
+          min-width="100" />
+        <el-table-column :label="t('table.status')" prop="matrixStatus" :show-overflow-tooltip="true" min-width="100">
+          <!-- <template #default="scope">
           <span v-if="scope.row.type == '1'">邮件模板</span>
           <span v-else>企业微信模板</span>
         </template> -->
-      </el-table-column>
-      <el-table-column :label="t('table.creator')" prop="createByName" :show-overflow-tooltip="true" min-width="100" />
-      <el-table-column :label="t('table.creatime')" prop="createTime" :show-overflow-tooltip="true" min-width="100" />
-      <el-table-column :label="t('table.modifiedBy')" prop="updateByName" :show-overflow-tooltip="true" min-width="100" />
-      <el-table-column :label="t('table.modifiedTime')" prop="updateTime" :show-overflow-tooltip="true" min-width="120" />
-      <el-table-column :label="t('table.remarks')" prop="matrixRemarks" :show-overflow-tooltip="true" min-width="100" />
-      <el-table-column v-if="toogle" :label="t('table.action')" min-width="150" fixed="right" align="center"
-        class-name="small-padding fixed-width" />
-      <el-table-column v-if="!toogle" :label="t('table.action')" min-width="150" fixed="right" align="center"
-        class-name="small-padding fixed-width">
-        <template #default="scope">
-          <el-button size="small" link type="primary" icon="Edit" @click="handleUpdate(scope.row)">{{ $t('button.edit')
-          }}</el-button>
-          <el-button size="small" link type="primary" icon="Delete" @click="handleDelete(scope.row)">{{
-            $t('button.delete')
-          }}</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+        </el-table-column>
+        <el-table-column :label="t('table.creator')" prop="createByName" :show-overflow-tooltip="true" min-width="100" />
+        <el-table-column :label="t('table.creatime')" prop="createTime" :show-overflow-tooltip="true" min-width="100" />
+        <el-table-column :label="t('table.modifiedBy')" prop="updateByName" :show-overflow-tooltip="true"
+          min-width="100" />
+        <el-table-column :label="t('table.modifiedTime')" prop="updateTime" :show-overflow-tooltip="true"
+          min-width="120" />
+        <el-table-column :label="t('table.remarks')" prop="matrixRemarks" :show-overflow-tooltip="true" min-width="100" />
+        <el-table-column :label="t('table.action')" min-width="150" fixed="right" align="center" class="qw"
+          class-name="small-padding fixed-width">
+          <template #default="scope" v-if="!toogle">
+            <el-button size="small" link type="primary" icon="Edit" @click="handleUpdate(scope.row)">{{ $t('button.edit')
+            }}</el-button>
+            <el-button size="small" link type="primary" icon="Delete" @click="handleDelete(scope.row)">{{
+              $t('button.delete')
+            }}</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize" @pagination="getList" />
 
-    <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize"
-      @pagination="getList" />
-
+    </div>
+    <div class="container-right">
+      <profile ref="profileRef"></profile>
+    </div>
     <!-- 添加或修改角色配置对话框 -->
     <el-dialog :title="title" v-model="open" append-to-body>
       <div class="demo-drawer__content">
@@ -149,7 +147,6 @@
         <el-button class="pull-right mr20" size="small" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-    <profile ref="profileRef"></profile>
   </div>
 </template>
 
@@ -346,11 +343,31 @@ watch(
     }
   }
 )
+interface SpanMethodProps {
+  row: any
+  column: any
+  rowIndex: number
+  columnIndex: number
+}
+const arraySpanMethod = ({
+  row,
+  column,
+  rowIndex,
+  columnIndex,
+}: SpanMethodProps) => {
+  if (toogle.value && columnIndex === 0) {
+    return [1, 2]
+  }
+  else if (toogle.value && columnIndex === 1) {
+    return [0, 0]
+  }
+}
 interface NObject {
   [key: string]: string | number | undefined | null | void
 }
 /** 查询角色列表 */
 function getList() {
+  toogle.value = false;
   loading.value = true;
   const obj = queryParams.value as NObject;
   Object.keys(obj).forEach(key => {
@@ -428,7 +445,7 @@ function handleUpdate(row: any) {
   (proxy?.$refs['profileRef'] as any)?.toogleShow();
 }
 function handleEdit() {
-  console.log(ids.value)
+  console.log(123)
 }
 /** 提交按钮 */
 const submitForm = async (formEl: FormInstance | undefined) => {
@@ -465,6 +482,11 @@ function handleDelete(row: any) {
     .catch(() => { });
 }
 </script>
+<style>
+.qw td {
+  background-color: #E5E5E5 !important;
+}
+</style>
 <style lang="scss" scoped>
 .table_divClass {
   // max-height: calc(100vh - 280px);
@@ -484,110 +506,107 @@ function handleDelete(row: any) {
   gap: 10px;
 }
 
-.el-table {
-  border-top: none !important;
-}
+// .el-table {
+//   border-top: none !important;
+// }
 
-.el-table__expanded-cell {
-  padding: 0 !important;
-}
+// .el-table__expanded-cell {
+//   padding: 0 !important;
+// }
 
-.tableWrap {
-  width: 100%;
-}
+// .tableWrap {
+//   width: 100%;
+// }
 
-.el-tabs__nav-scroll {
-  padding: 0 20px;
-  box-sizing: border-box;
-}
+// .el-tabs__nav-scroll {
+//   padding: 0 20px;
+//   box-sizing: border-box;
+// }
 
-.tableWrap .el-table {
-  width: 1240px;
-  margin: 0 auto;
-}
+// .tableWrap .el-table {
+//   width: 1240px;
+//   margin: 0 auto;
+// }
 
-.el-icon.el-icon-arrow-right {
-  color: #fff;
-}
 
-.el-table__row.expanded {
-  background: #fff !important;
-  position: relative !important;
-  top: -100px !important;
-  border: 1px solid red;
-}
+// .el-table__row.expanded {
+//   background: #fff !important;
+//   position: relative !important;
+//   top: -100px !important;
+//   border: 1px solid red;
+// }
 
-.el-tabs__content {
-  display: none;
-}
+// .el-tabs__content {
+//   display: none;
+// }
 
-.el-table__row.expanded>td {
-  padding: 7px 0;
-}
+// .el-table__row.expanded>td {
+//   padding: 7px 0;
+// }
 
-.el-table__row.expanded {
-  border: 1px solid #E5E5E5;
-}
+// .el-table__row.expanded {
+//   border: 1px solid #E5E5E5;
+// }
 
-.el-table__row.expanded:first-child {
-  border-bottom: none;
-}
+// .el-table__row.expanded:first-child {
+//   border-bottom: none;
+// }
 
-.childTable .el-table__body {
-  border-top: 1px solid #E5E5E5;
-}
+// .childTable .el-table__body {
+//   border-top: 1px solid #E5E5E5;
+// }
 
-.childTable .el-table__row.expanded>td:first-child {
-  border-left: 1px solid #E5E5E5;
-}
+// .childTable .el-table__row.expanded>td:first-child {
+//   border-left: 1px solid #E5E5E5;
+// }
 
-.childTable .el-table__row.expanded>td:last-child {
-  border-right: 1px solid #E5E5E5;
-}
+// .childTable .el-table__row.expanded>td:last-child {
+//   border-right: 1px solid #E5E5E5;
+// }
 
-.el-tabs__header.is-top {
-  border-bottom: none;
-}
+// .el-tabs__header.is-top {
+//   border-bottom: none;
+// }
 
-.childTable .el-table__header-wrapper {
-  display: none;
-}
+// .childTable .el-table__header-wrapper {
+//   display: none;
+// }
 
-.conWrap {
-  height: 44px;
-  background: #E5E5E5;
-  line-height: 44px;
-  padding-left: 10px;
-  font-size: 14px;
-  font-family: Microsoft YaHei;
-  line-height: 19px;
-  color: #333333;
-}
+// .conWrap {
+//   height: 44px;
+//   background: #E5E5E5;
+//   line-height: 44px;
+//   padding-left: 10px;
+//   font-size: 14px;
+//   font-family: Microsoft YaHei;
+//   line-height: 19px;
+//   color: #333333;
+// }
 
-.conWrap>span {
-  line-height: 44px;
-}
+// .conWrap>span {
+//   line-height: 44px;
+// }
 
-.el-table .has-gutter .is-leaf {
-  position: relative !important;
-  left: -48px !important;
-}
+// .el-table .has-gutter .is-leaf {
+//   position: relative !important;
+//   left: -48px !important;
+// }
 
-.el-table .has-gutter .is-leaf:last-child {
-  position: relative !important;
-  left: 0px !important;
-}
+// .el-table .has-gutter .is-leaf:last-child {
+//   position: relative !important;
+//   left: 0px !important;
+// }
 
-.el-table__header-wrapper {
-  background: #EBEBEB;
-}
+// .el-table__header-wrapper {
+//   background: #EBEBEB;
+// }
 
-.el-table .has-gutter>tr>th {
-  background: #EBEBEB;
-  font-size: 14px;
-  font-family: Microsoft YaHei;
-  font-weight: bold;
-  line-height: 19px;
-  color: #333333;
-}
+// .el-table .has-gutter>tr>th {
+//   background: #EBEBEB;
+//   font-size: 14px;
+//   font-family: Microsoft YaHei;
+//   font-weight: bold;
+//   line-height: 19px;
+//   color: #333333;
+// }
 </style>

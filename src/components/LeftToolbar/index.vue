@@ -11,7 +11,7 @@
                 <el-button circle icon="EditPen" :disabled="editDis" @click="handleChange('docEdit')" />
             </el-tooltip>
             <el-tooltip v-if="showSet" :content="t('button.setStatus')" placement="top">
-                <el-button circle icon="Switch" @click="handleChange('docStatus')" />
+                <el-button circle icon="Switch" :disabled="editDis" @click="handleChange('docStatus')" />
             </el-tooltip>
             <el-tooltip v-if="showToogle" :content="t('button.setStatus')" placement="top">
                 <el-switch :model-value="toogle" @change="handleToogle($event)" style="margin:0 10px" />
