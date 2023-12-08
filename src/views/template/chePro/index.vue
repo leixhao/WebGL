@@ -11,15 +11,6 @@
     </div>
   </div>
 </template>
-<<<<<<< HEAD
-<script setup lang="ts">
-import { ref } from 'vue';
-const list=ref({
-  id:null
-})
-console.log(list.value?.id)
-</script>
-=======
 
 <script setup>
 import { ref, onMounted } from "vue";
@@ -96,4 +87,3 @@ onMounted(() => {
     border: 1px solid #ccc;
   }
 }</style>
->>>>>>> 7dcf7170b5b12e2821f98faa30c7a5b76d246267
