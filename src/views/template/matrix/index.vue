@@ -102,21 +102,22 @@
     <el-dialog :title="title" v-model="open" append-to-body>
       <div class="demo-drawer__content">
         <el-form class="m20" ref="ruleFormRef" :model="rulesForm" :rules="rules" label-width="120px">
-          <el-form-item label="对应类型" prop="typeValue">
-            <el-tree-select v-model="rulesForm.typeValue" :data="typeData" :render-after-expand="false" />
+          <el-form-item label="对应类型" prop="matrixType">
+            <el-tree-select v-model="rulesForm.matrixType" :data="typeData" :render-after-expand="false" />
           </el-form-item>
-          <el-form-item label="名称" prop="name">
-            <el-input v-model="rulesForm.name" style="width: 200px"></el-input>
+          <el-form-item label="名称" prop="matrixName">
+            <el-input v-model="rulesForm.matrixName" style="width: 200px"></el-input>
           </el-form-item>
-          <el-form-item label="备注" prop="remarks">
-            <el-input v-model="rulesForm.remarks" placeholder="备注" type="textarea" :rows="3" />
+          <el-form-item label="备注" prop="matrixRemarks">
+            <el-input v-model="rulesForm.matrixRemarks" placeholder="备注" type="textarea" :rows="3" />
           </el-form-item>
           <el-form-item>
             <template #label>
               <span style="font-weight: 600;"><span
                   style="color: red;display: inline-block;margin-right: 5px;">*</span>主内容</span>
             </template>
-            <el-upload class="upload-demo" drag :action="APLOAD_RUL" :auto-upload="false" multiple>
+            <el-upload class="upload-demo" drag :action="APLOAD_RUL" :auto-upload="false" multiple :accept="'.xlsx'"
+              :limit="1" @change="handleUploadChange" @remove="handleUploadRemove">
               <el-icon class="el-icon--upload"><upload-filled /></el-icon>
               <div class="el-upload__text">
                 将文件拖到此处，或者<em>点击上传</em>
@@ -132,7 +133,8 @@
             <template #label>
               <span style="font-weight: 600;">附件</span>
             </template>
-            <el-upload class="upload-demo" drag :action="APLOAD_RUL" :auto-upload="false" multiple>
+            <el-upload class="upload-demo" drag :action="APLOAD_RUL" :auto-upload="false" multiple
+              @change="handleUploadChange1" @remove="handleUploadRemove1">
               <el-icon class="el-icon--upload"><upload-filled /></el-icon>
               <div class="el-upload__text">
                 将文件拖到此处，或者<em>点击上传</em>
@@ -152,6 +154,8 @@
 
 <script lang="ts" setup>
 import {
+  addMatrix,
+  updateMatrix,
   getSelectList
 } from "@/api/template/matrix";
 import { getCurrentInstance, ComponentInternalInstance, ref, watch } from 'vue';
@@ -177,7 +181,7 @@ const typeOptions = ref([
     label: "企业微信模板",
   },
 ])
-const typeValue = ref();
+const matrixType = ref();
 const typeData = [
   {
     value: '1',
@@ -284,34 +288,41 @@ const stateOption = ref([
     label: "否",
   },
 ])
+interface Form {
+  id: string
+  matrixType: undefined,
+  matrixName: undefined,
+  matrixRemarks: undefined,
+  matrixContents: undefined,
+  matrixAttachments: any
+}
 const rulesForm = ref({
   id: undefined,
-  typeValue: undefined,
-  name: undefined,
-  remarks: undefined
+  matrixType: '',
+  matrixName: undefined,
+  matrixRemarks: undefined,
+  matrixContents: undefined,
+  matrixAttachments: []
 })
 const rules = ref({
-  type: [
+  matrixType: [
     { required: true, message: "模板类型不能为空", trigger: "blur" },
   ],
-  name: [
+  matrixName: [
     { required: true, message: "模板名称不能为空", trigger: "blur" },
   ],
-  title: [
-    { required: true, message: "模板标题不能为空", trigger: "blur" },
-  ],
-  content: [
-    { required: true, message: "模板内容不能为空", trigger: "blur" },
-  ],
+  // title: [
+  //   { required: true, message: "模板标题不能为空", trigger: "blur" },
+  // ],
+  // content: [
+  //   { required: true, message: "模板内容不能为空", trigger: "blur" },
+  // ],
 })
 getList()
 
 watch(
   toogle, (newVal, oldVal) => {
     if (newVal) {
-      // let hasP = templateList.value.filter((item: any) => {
-      //   return item.matrixName?.indexOf('p') > -1
-      // })
       let hasp = templateList.value.reduce((result: any, item) => {
         const key = item['matrixRevision'];
         if (!result[key]) {
@@ -407,9 +418,11 @@ function cancel() {
 function reset() {
   rulesForm.value = {
     id: undefined,
-    name: undefined,
-    typeValue: undefined,
-    remarks: undefined
+    matrixType: '',
+    matrixName: undefined,
+    matrixRemarks: undefined,
+    matrixContents: undefined,
+    matrixAttachments: <any>[]
   };
   console.log(234)
   proxy?.resetForm("ruleFormRef");
@@ -447,18 +460,44 @@ function handleUpdate(row: any) {
 function handleEdit() {
   console.log(123)
 }
+
+//文件处理 
+const fileList = ref<any[]>([]);
+// 上传事件
+function handleUploadChange(e: any) {
+  console.log(e)
+  rulesForm.value.matrixContents = e
+}
+function handleUploadRemove(e: any) {
+  rulesForm.value.matrixContents = undefined;
+}
+function handleUploadChange1(e: never) {
+  console.log(e)
+  rulesForm.value.matrixAttachments.push(e)
+}
+function handleUploadRemove1(e: any) {
+  console.log(e)
+  let index = rulesForm.value.matrixAttachments.indexOf(e);
+  if (index >= 0) {
+    rulesForm.value.matrixAttachments.splice(index, 1);
+  }
+  console.log(rulesForm.value.matrixAttachments)
+}
+
 /** 提交按钮 */
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
+    console.log(rulesForm.value)
     if (rulesForm.value.id != undefined) {
-      updatTemplate(rulesForm).then((response: any) => {
+      updateMatrix(rulesForm.value).then((response: any) => {
         proxy?.$modal.msgSuccess("修改成功");
         open.value = false;
         getList();
       });
     } else {
-      addTemplate(rulesForm).then((response: any) => {
+      rulesForm.value.matrixType = '变更矩阵'
+      addMatrix(rulesForm.value).then((response: any) => {
         console.log(rulesForm);
         proxy?.$modal.msgSuccess("新增成功");
         open.value = false;
