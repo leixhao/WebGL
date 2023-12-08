@@ -19,7 +19,7 @@ export function addMatrix(data: any) {
     })
 }
 
-//
+// 更新
 export function updateMatrix(data: any) {
     return request({
         url: '/ecm/matrix/updateMatrix',

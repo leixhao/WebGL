@@ -48,7 +48,7 @@ function handleUpload(row: object, item: any) {
   console.log(row);
   show.value = true;
 }
-const ItemId = ref(0);
+const ItemId = ref();
 const emit = defineEmits(["update:modelValue"]);
 function handleDelete(row: any, item: any) {
   proxy?.$modal
@@ -60,9 +60,9 @@ function handleDelete(row: any, item: any) {
         uniqueName: item.uniqueName,
       };
       let Promise;
-      if ((row.name == "Content")) {
+      if (row.name == "Content") {
         Promise = deleteMatrixContent(params);
-      } else if ((row.name == "Attachments")) {
+      } else if (row.name == "Attachments") {
         Promise = deleteMatrixAttach(params);
       }
       Promise?.then((res) => {
@@ -73,7 +73,7 @@ function handleDelete(row: any, item: any) {
 }
 function init(data: any) {
   let Attachments = [];
-  let Contents:any = [];
+  let Contents: any = [];
   if (data.matrixAttachments) {
     Attachments = JSON.parse(data.matrixAttachments);
   }
