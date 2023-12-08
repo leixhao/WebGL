@@ -42,3 +42,42 @@ export function getSecret(appId: string) {
         method: 'get',
     })
 }
+
+// 获取详情
+export function getMatrixDetail(data:any){
+    return request({
+        url: `/ecm/matrix/selectMatrixById/${data.matrixId}`,
+        method: 'post',
+    })
+}
+// 删除MatrixAttach
+export function deleteMatrixAttach(data:any){
+    return request({
+        url: `/ecm/matrix/deleteMatrixAttach`,
+        method:'delete',
+        data
+    })
+}
+// 删除content 
+export function deleteMatrixContent(data:any){
+    return request({
+        url: `/ecm/matrix/deleteMatrixContent`,
+        method:'delete',
+        data
+    })
+}
+// 获取历史记录
+export function getUpVersionLog(data:any){
+    return request({
+        url: `/ecm/matrix/selectUpVersionLogList/${data.id}`,
+        method:'get',
+    })
+}
+// 更新对象属性
+export function updateMatrix(data:any){
+    return request({
+        url: `/ecm/matrix/updateMatrix`,
+        method:'post',
+        data
+    })
+}

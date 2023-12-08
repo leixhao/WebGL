@@ -99,7 +99,7 @@
         <el-button class="pull-right mr20" size="small" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-    <profile ref="profileRef"></profile>
+    <profile ref="profileRef"  @update="getList"></profile>
   </div>
 </template>
 
@@ -337,7 +337,7 @@ function handleAdd() {
 }
 /** 修改按钮操作 */
 function handleUpdate(row: any) {
-  (proxy?.$refs['profileRef'] as any)?.toogleShow();
+  (proxy?.$refs['profileRef'] as any)?.toogleShow(row);
 }
 function handleEdit() {
 

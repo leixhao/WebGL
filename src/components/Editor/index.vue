@@ -1,6 +1,6 @@
 <template>
     <div class="editor">
-        <quill-editor v-model:content="content"  contentType="html" :options="options" :style="styles" />
+        <quill-editor v-model:content="content" @change="onEditorChange" ref="Quill" contentType="html" :options="options" :style="styles" />
     </div>
 </template>
 
@@ -73,8 +73,15 @@
     /** 
      * 获取富文本的值，抛出方法
     */
+   const Quill=ref()
    function getContent(){
+    // let quillRefs = Quill.value?.getQuill();
+    // return quillRefs?.getText()
     console.log(content.value);
+    return content.value
+   }
+   function onEditorChange(quill:object){
+    console.log(quill);
    }
    defineExpose({ getContent });
 </script>

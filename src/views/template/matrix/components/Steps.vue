@@ -130,7 +130,7 @@ function handleSort() {
       align-items: flex-end;
       justify-content: space-between;
       font-size: 13px;
-      margin:10px 0 15px;
+      margin:15px 0 20px;
       .subTitle {
         flex: 1;
       }

@@ -23,10 +23,10 @@
       </div>
       <div class="profile-content">
         <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
-          <el-tab-pane label="Properties" name="first">
-            <Form></Form>
+          <el-tab-pane label="对象属性" name="first">
+            <Form ref="form" @update="update"></Form>
           </el-tab-pane>
-          <el-tab-pane label="Relations" name="second">
+          <el-tab-pane label="相关对象" name="second">
             <Header></Header>
             <div class="table-container">
               <el-table :data="tableData" border style="width: 100%">
@@ -109,16 +109,16 @@
               </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="Contents/Attachments" name="third">
-            <Associated ref="AssociatedRefs"></Associated>
+          <el-tab-pane label="相关文档" name="third">
+            <Associated ref="AssociatedRefs" @update:modelValue="getList"></Associated>
           </el-tab-pane>
-          <el-tab-pane label="Change Logs" name="fourth">
+          <el-tab-pane label="修改记录" name="fourth">
             <Steps ref="stepRefs"></Steps>
           </el-tab-pane>
-          <el-tab-pane label="Revision" name="fifth">
+          <el-tab-pane label="历史记录" name="fifth">
             <Header></Header>
             <div class="table-container">
-              <el-table :data="tableData" border style="width: 100%">
+              <el-table :data="fifthTable" border style="width: 100%">
                 <el-table-column
                   prop="code"
                   show-overflow-tooltip
@@ -208,6 +208,7 @@
 import { getCurrentInstance, ComponentInternalInstance, ref } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
 import { Edit, Picture, UploadFilled } from "@element-plus/icons-vue";
+import {getMatrixDetail,getUpVersionLog} from "@/api/template/matrix";
 import { useI18n } from "vue-i18n";
 import Form from "./../components/Form.vue";
 import Steps from "./../components/Steps.vue";
@@ -215,18 +216,50 @@ import Associated from "./../components/Associated.vue";
 import Header from "./../components/table-header.vue";
 const { t } = useI18n();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
-const ruleFormRef = ref<FormInstance>();
-const queryForm = ref<FormInstance>();
 let open = ref(false);
 let activeName = ref("first");
-function toogleShow() {
-  open.value = !open.value;
+const Info=ref()
+const form=ref()
+const AssociatedRefs=ref()
+const Row=ref({
+  id:null
+})
+const emit=defineEmits(['update'])
+function update(){
+  emit('update')
 }
+function toogleShow(row:any) {
+  Row.value=row;
+  getList()
+  getUpVersionLogList()
+  open.value = true;
+}
+function getList(){
+  getMatrixDetail({
+    matrixId:Row.value?.id
+  }).then(res=>{
+    Info.value=res.data;
+    form.value?.init(Info.value)
+    AssociatedRefs.value?.init({
+      id:Info.value?.id,
+      matrixContents:Info.value?.matrixContents,
+      matrixAttachments:Info.value?.matrixAttachments
+    })
+  })
+}
+const fifthTable=ref([])
 const page = ref({
   currentPage: 1,
   pageSize: 20,
   total: 0,
 });
+function getUpVersionLogList(){
+  getUpVersionLog({
+    id:Row.value?.id
+  }).then(res=>{
+
+  })
+}
 const stepRefs = ref(null);
 const tableData = ref([]);
 function handleClick(tab: object) {
@@ -247,7 +280,7 @@ defineExpose({
     display: flex;
 
     .profile-left {
-      margin-right: 70px;
+      margin-right: 25px;
 
       img {
         border-radius: 10px;
@@ -278,7 +311,7 @@ defineExpose({
     }
   }
   .profile-content {
-    padding: 10px;
+    padding: 10px 0;
     height: calc(100% - 60px);
     .el-tabs {
       height: 100%;
