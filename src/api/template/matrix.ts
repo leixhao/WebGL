@@ -11,19 +11,19 @@ export function getSelectList(data: any) {
 }
 
 //
-export function addApp(data: any) {
+export function addMatrix(data: any) {
     return request({
-        url: 'system/app/add',
+        url: '/ecm/matrix/addMatrix',
         method: 'post',
         data: data
     })
 }
 
 //
-export function editApp(data: any) {
+export function updateMatrix(data: any) {
     return request({
-        url: 'system/app/edit',
-        method: 'put',
+        url: '/ecm/matrix/updateMatrix',
+        method: 'post',
         data: data
     })
 }
@@ -71,13 +71,5 @@ export function getUpVersionLog(data:any){
     return request({
         url: `/ecm/matrix/selectUpVersionLogList/${data.id}`,
         method:'get',
-    })
-}
-// 更新对象属性
-export function updateMatrix(data:any){
-    return request({
-        url: `/ecm/matrix/updateMatrix`,
-        method:'post',
-        data
     })
 }
