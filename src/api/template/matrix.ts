@@ -5,7 +5,7 @@ let PRE = '/ecm/'
 //
 export function getSelectList(data: any) {
     return request({
-        url: PRE + 'matrix/selectList',
+        url: PRE + 'matrix/selectList' + '?pageNum=' + data.pageNum +'&pageSize=' + data.pageSize,
         method: 'post',
         data
     })
