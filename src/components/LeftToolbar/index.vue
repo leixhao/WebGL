@@ -8,20 +8,23 @@
                 <el-button icon="Delete" type="danger" plain :disabled="delDis"
                     @click="handleChange('docDelete')">删除</el-button>
             </el-tooltip>
-            <el-tooltip v-if="edit" :content="t('button.amendment')" placement="top">
-                <el-button :disabled="delDis" plain type="warning" @click="handleChange('docEdit')">
-                    <template #icon>
-                        <img src="@/assets/images/amendmentLight.png" alt="" :key="Math.random()"
-                            :style="delDis ? 'opacity: .5;' : 'opacity: 1'">
-                    </template>
-                    修订</el-button>
-            </el-tooltip>
+            <div @mouseover="toggleHover(true)" @mouseleave="toggleHover(false)" style="margin: 0 10px;">
+                <el-tooltip v-if="edit" :content="t('button.amendment')" placement="top">
+                    <el-button :disabled="editDis" plain type="warning" @click="handleChange('docEdit')">
+                        <template #icon>
+                            <!-- <img class="amendment" src="@/assets/images/amendmentLight.png" alt="" :key="Math.random()" -->
+                            <img :src="imgURL" alt="" :key="Math.random()" :style="delDis ? 'opacity: .5;' : 'opacity: 1'">
+                        </template>
+                        修订</el-button>
+                </el-tooltip>
+            </div>
             <el-tooltip v-if="showSet" :content="t('button.setStatus')" placement="top">
-                <el-button icon="Switch" :disabled="editDis" plain type="info"
+                <el-button icon="Switch" :disabled="statusDis" plain type="info"
                     @click="handleChange('docStatus')">设置状态</el-button>
             </el-tooltip>
-            <el-tooltip v-if="showToogle" :content="'显示最新'" placement="top">
-                <el-switch :model-value="toogle" @change="handleToogle($event)" style="margin:0 10px" />
+            <el-tooltip v-if="showToogle" :content="'只显示最新'" placement="top">
+                <el-switch :model-value="showNewData" @change="handleNew($event)" style="margin:0 10px" />
+                <!-- <el-switch :model-value="showNewData" @change="handleToogle($event)" style="margin:0 10px" /> -->
             </el-tooltip>
             <el-tooltip v-if="showExport" :content="'导出'" placement="top">
                 <el-button circle icon="Upload" @click="handleChange('docExport')" />
@@ -40,12 +43,12 @@
 </template>
 
 <script setup lang="ts">
-import { Warning } from '@element-plus/icons-vue';
-import { type } from 'os';
 import { ref, computed } from 'vue';
 import { useI18n } from "vue-i18n";
+import amendmentLight from '@/assets/images/amendmentLight.png';
+import amendmentWhite from '@/assets/images/amendmentWhite.png';
 const { t } = useI18n()
-
+const imgURL = ref(amendmentLight)
 const props = defineProps({
     add: {
         type: Boolean,
@@ -67,11 +70,19 @@ const props = defineProps({
         type: Boolean,
         default: true,
     },
+    statusDis: {
+        type: Boolean,
+        default: true,
+    },
     showSet: {
         type: Boolean,
         default: true,
     },
     toogle: {
+        type: Boolean,
+        default: true,
+    },
+    showNewData: {
         type: Boolean,
         default: true,
     },
@@ -100,7 +111,7 @@ const props = defineProps({
     },
 });
 
-const emits = defineEmits(['update:showSearch', 'update:toogle', 'docAdd', 'docDelete', 'docEdit', 'docStatus', 'docExport', 'queryTable']);
+const emits = defineEmits(['update:showSearch', 'update:showNewData', 'update:toogle', 'docAdd', 'docDelete', 'docEdit', 'docStatus', 'docExport', 'queryTable']);
 
 // 显隐数据
 const value = ref<any[]>([]);
@@ -121,10 +132,15 @@ const style = computed(() => {
 function handleChange(type: any) {
     emits(type)
 }
+function handleNew(val: any) {
+    emits('update:showNewData', val)
+}
 function handleToogle(val: any) {
     emits('update:toogle', val)
 }
-
+function toggleHover(flag: Boolean) {
+    imgURL.value = flag ? amendmentWhite : amendmentLight;
+}
 // 新增
 function handleAdd() {
     emits('docAdd')

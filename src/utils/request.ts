@@ -61,8 +61,8 @@ service.interceptors.request.use(
                 const s_data = sessionObj.data; // 请求数据
                 const s_time = sessionObj.time; // 请求时间
                 // 增加文件上传间隔时间过短处理
-                const intervalMax = 1000; // 间隔时间(ms)，小于此时间视为重复提交
-                const intervalMin = 500; // 间隔时间(ms)，小于此时间视为重复提交
+                const intervalMax = 3000; // 间隔时间(ms)，小于此时间视为重复提交
+                const intervalMin = 2000; // 间隔时间(ms)，小于此时间视为重复提交
                 if (
                     s_data === requestObj.data &&
                     intervalMin < requestObj.time - s_time && requestObj.time - s_time < intervalMax &&

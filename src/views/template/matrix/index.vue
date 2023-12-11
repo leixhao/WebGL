@@ -4,9 +4,14 @@
       <el-row :gutter="10" class="mb20">
         <el-col :span="24" :xs="24">
           <el-form v-show="showSearch" @submit.prevent ref="queryForm" :model="queryParams" :inline="true">
-            <el-form-item :label="''" prop="matrixNo">
+            <el-form-item :label="'关键字'" prop="matrixNo">
               <el-input v-model="queryParams.matrixNo" placeholder="请输入搜索关键字" clearable style="width: 240px"
                 @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item :label="'状态'" prop="matrixStatus">
+              <el-select v-model="queryParams.matrixStatus" placeholder="请选择搜索状态" clearable style="width: 240px">
+                <el-option v-for="dict in statusOptions" :key="dict.value" :label="dict.label" :value="dict.value" />
+              </el-select>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">{{ $t("button.search") }}</el-button>
@@ -14,12 +19,14 @@
             </el-form-item>
           </el-form>
         </el-col>
-        <left-toolbar v-model:showSearch="showSearch" :delDis="multiple" :editDis="single" v-model:toogle="toogle"
-          @docAdd="handleAdd" @docDelete="handleDelete" @docEdit="handleEdit" @docStatus="handleStatus"
-          @queryTable="getList"></left-toolbar>
+        <left-toolbar v-model:showSearch="showSearch" v-model:show-new-data="showNewData" :show-toogle="true"
+          :delDis="multiple" :statusDis="single"
+          :editDis="multiple == true && showNewData == true"
+          v-model:toogle="toogle" @docAdd="handleAdd" @docDelete="handleDelete" @docEdit="handleEdit"
+          @docStatus="handleStatus" @queryTable="getList"></left-toolbar>
         <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
-      <el-table class="parentTable" v-loading="loading" :span-method="arraySpanMethod" :default-expand-all="true"
+      <el-table class="parentTable" v-loading="loading" border :span-method="arraySpanMethod" :default-expand-all="true"
         :row-class-name="toogle ? 'qw' : ''" :data="templateList" @selection-change="handleSelectionChange">
         <el-table-column v-if="toogle" type="expand">
           <template #default="scope">
@@ -28,7 +35,7 @@
                 @selection-change="handleSelectionChange">
                 <el-table-column align="center" width="45" />
                 <el-table-column type="selection" align="center" width="80" />
-                <el-table-column :label="t('table.number')" prop="matrixNo" min-width="100">
+                <el-table-column :label="t('table.number')" prop="matrixNo" min-width="120">
                 </el-table-column>
                 <el-table-column :label="t('table.name')" prop="matrixName" :show-overflow-tooltip="true"
                   min-width="100" />
@@ -77,8 +84,24 @@
           </template>
         </el-table-column>
         <el-table-column type="selection" align="center" width="80" />
-        <el-table-column :label="t('table.number')" :prop="toogle ? 'title' : 'matrixNo'" min-width="100" />
-        <el-table-column :label="t('table.name')" prop="matrixName" :show-overflow-tooltip="true" min-width="100" />
+        <el-table-column :label="t('table.number')" :prop="toogle ? 'title' : 'matrixNo'" min-width="120">
+          <template #default="scope">
+            <el-tooltip class="box-item" effect="dark" :content="scope.row.matrixNo" placement="top-start">
+              <span v-if="isLight && queryParams.matrixNo"
+                v-html="highlightText(scope.row.matrixNo, queryParams.matrixNo)">
+              </span>
+              <span v-else>{{ scope.row.matrixNo }}</span>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('table.name')" prop="matrixName" :show-overflow-tooltip="true" min-width="150">
+          <template #default="scope">
+            <span v-if="isLight && queryParams.matrixNo && scope.row.matrixName.length < 8">{{
+              highlightText(scope.row.matrixName, queryParams.matrixNo)
+            }}</span>
+            <span v-else>{{ scope.row.matrixName }}</span>
+          </template>
+        </el-table-column>
         <el-table-column :label="t('table.version')" prop="matrixRevision" :sortable="toogle ? false : true"
           :show-overflow-tooltip="true" width="80" />
         <el-table-column :label="t('table.status')" prop="matrixStatus" :show-overflow-tooltip="true" min-width="100">
@@ -95,15 +118,15 @@
             <span v-else>{{ statusOptions.filter(item => item.value == scope.row.matrixStatus)[0].label }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="t('table.creator')" prop="createByName" :show-overflow-tooltip="true" min-width="100" />
+        <el-table-column :label="t('table.creator')" prop="createByName" :show-overflow-tooltip="true" min-width="120" />
         <el-table-column :label="t('table.creatime')" prop="createTime" :sortable="toogle ? false : true"
           :show-overflow-tooltip="true" min-width="100" />
         <el-table-column :label="t('table.modifiedBy')" prop="updateByName" :show-overflow-tooltip="true"
-          min-width="100" />
+          min-width="120" />
         <el-table-column :label="t('table.modifiedTime')" prop="updateTime" :show-overflow-tooltip="true"
           min-width="120" />
         <el-table-column :label="t('table.remarks')" prop="matrixRemarks" :show-overflow-tooltip="true" min-width="100" />
-        <el-table-column :label="t('table.action')" min-width="300" fixed="right" align="center" class="qw"
+        <el-table-column :label="t('table.action')" min-width="250" fixed="right" align="center" class="qw"
           class-name="small-padding fixed-width">
           <template #default="scope" v-if="!toogle">
             <el-button size="small" link type="primary" @click="handleUpdate(scope.row)">
@@ -139,14 +162,15 @@
           <!-- <el-form-item label="对应类型" prop="matrixType">
             <el-tree-select v-model="rulesForm.matrixType" :data="typeData" :render-after-expand="false" />
           </el-form-item> -->
-          <el-form-item label="对应类型" prop="matrixType">
+          <el-form-item label="对象类型" prop="matrixType">
             <el-input v-model="rulesForm.matrixType" style="width: 200px"></el-input>
           </el-form-item>
           <el-form-item label="名称" prop="matrixName">
             <el-input v-model="rulesForm.matrixName" style="width: 200px"></el-input>
           </el-form-item>
           <el-form-item label="备注" prop="matrixRemarks">
-            <el-input v-model="rulesForm.matrixRemarks" placeholder="备注" type="textarea" :rows="3" />
+            <el-input v-model="rulesForm.matrixRemarks" style="width: 300px;" placeholder="备注" type="textarea"
+              :rows="3" />
           </el-form-item>
           <el-form-item>
             <template #label>
@@ -187,7 +211,7 @@
         <el-button class="pull-right mr20" size="small" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-    <el-dialog :title="'设置状态'" v-model="statusOpen" width="30%" align-center append-to-body>
+    <el-dialog :title="'设置状态'" v-model="statusOpen" width="400px" align-center append-to-body>
       <el-select v-model="setStatus" placeholder="设置状态" clearable style="width: 100%">
         <el-option v-for="dict in statusOptions" :key="dict.value" :label="dict.label" :value="dict.value" />
       </el-select>
@@ -354,6 +378,7 @@ const single = ref(true);
 const multiple = ref(true);
 // 显示搜索条件
 const showSearch = ref(true);
+const showNewData = ref(true);
 // 总条数
 const total = ref(0);
 // 角色表格数据
@@ -367,6 +392,8 @@ const dateRange = ref([])
 // 查询参数
 const queryParams = ref({
   matrixNo: undefined,
+  matrixStatus: undefined,
+  matrixRevision: '1',
   pageNum: 1,
   pageSize: 10,
 })
@@ -390,7 +417,7 @@ const rulesForm = ref({
 })
 const rules = ref({
   matrixType: [
-    { required: true, message: "模板类型不能为空", trigger: "blur" },
+    { required: true, message: "对象类型不能为空", trigger: "blur" },
   ],
   matrixName: [
     { required: true, message: "模板名称不能为空", trigger: "blur" },
@@ -436,6 +463,13 @@ watch(
       console.log(newArr)
       templateList.value = newArr
     }
+  }
+)
+watch(
+  showNewData, (newVal, oldVal) => {
+    multiple.value = false;
+    queryParams.value.matrixRevision = newVal ? '1' : '';
+    getList();
   }
 )
 interface SpanMethodProps {
@@ -485,6 +519,7 @@ function cancel() {
 }
 // 表单重置
 function reset() {
+  isLight.value = false;
   rulesForm.value = {
     id: undefined,
     matrixType: '',
@@ -495,12 +530,26 @@ function reset() {
   };
   proxy?.resetForm("ruleFormRef");
 }
+const isLight = ref(false)
+// 匹配字符高亮
+function highlightText(text: string, keyword: string) {
+  // 使用正则表达式创建一个匹配关键字的正则对象
+  var regex = new RegExp(keyword, 'gi');
+
+  // 使用replace()方法将匹配到的关键字用<span>标签包裹起来，并添加样式
+  var highlightedText = text.replace(regex, function (match) {
+    return '<span class="highlight">' + match + '</span>';
+  });
+
+  return highlightedText;
+}
 /** 搜索按钮操作 */
 function handleQuery() {
   queryParams.value.matrixNo = !!queryParams.value.matrixNo
     ? queryParams.value.matrixNo
     : undefined;
   queryParams.value.pageNum = 1;
+  isLight.value = true;
   getList();
 }
 /** 重置按钮操作 */
@@ -564,6 +613,7 @@ const handleUpload = async () => {
       proxy?.$modal.msgSuccess("新增成功");
       open.value = false;
       getList();
+      reset();
     });
   } else {
     rulesForm.value.matrixType = '变更矩阵';
@@ -572,6 +622,7 @@ const handleUpload = async () => {
       proxy?.$modal.msgSuccess("新增成功");
       open.value = false;
       getList();
+      reset();
     });
   }
 }
@@ -646,6 +697,10 @@ function handleDelete(row: any) {
 .qw td {
   background-color: #E5E5E5 !important;
 }
+
+.highlight {
+  background-color: #9cc7ff !important;
+}
 </style>
 <style lang="scss" scoped>
 .table_divClass {
@@ -665,108 +720,4 @@ function handleDelete(row: any) {
   justify-content: flex-end;
   gap: 10px;
 }
-
-// .el-table {
-//   border-top: none !important;
-// }
-
-// .el-table__expanded-cell {
-//   padding: 0 !important;
-// }
-
-// .tableWrap {
-//   width: 100%;
-// }
-
-// .el-tabs__nav-scroll {
-//   padding: 0 20px;
-//   box-sizing: border-box;
-// }
-
-// .tableWrap .el-table {
-//   width: 1240px;
-//   margin: 0 auto;
-// }
-
-
-// .el-table__row.expanded {
-//   background: #fff !important;
-//   position: relative !important;
-//   top: -100px !important;
-//   border: 1px solid red;
-// }
-
-// .el-tabs__content {
-//   display: none;
-// }
-
-// .el-table__row.expanded>td {
-//   padding: 7px 0;
-// }
-
-// .el-table__row.expanded {
-//   border: 1px solid #E5E5E5;
-// }
-
-// .el-table__row.expanded:first-child {
-//   border-bottom: none;
-// }
-
-// .childTable .el-table__body {
-//   border-top: 1px solid #E5E5E5;
-// }
-
-// .childTable .el-table__row.expanded>td:first-child {
-//   border-left: 1px solid #E5E5E5;
-// }
-
-// .childTable .el-table__row.expanded>td:last-child {
-//   border-right: 1px solid #E5E5E5;
-// }
-
-// .el-tabs__header.is-top {
-//   border-bottom: none;
-// }
-
-// .childTable .el-table__header-wrapper {
-//   display: none;
-// }
-
-// .conWrap {
-//   height: 44px;
-//   background: #E5E5E5;
-//   line-height: 44px;
-//   padding-left: 10px;
-//   font-size: 14px;
-//   font-family: Microsoft YaHei;
-//   line-height: 19px;
-//   color: #333333;
-// }
-
-// .conWrap>span {
-//   line-height: 44px;
-// }
-
-// .el-table .has-gutter .is-leaf {
-//   position: relative !important;
-//   left: -48px !important;
-// }
-
-// .el-table .has-gutter .is-leaf:last-child {
-//   position: relative !important;
-//   left: 0px !important;
-// }
-
-// .el-table__header-wrapper {
-//   background: #EBEBEB;
-// }
-
-// .el-table .has-gutter>tr>th {
-//   background: #EBEBEB;
-//   font-size: 14px;
-//   font-family: Microsoft YaHei;
-//   font-weight: bold;
-//   line-height: 19px;
-//   color: #333333;
-// }
 </style>
