@@ -177,7 +177,8 @@
                   style="color: red;display: inline-block;margin-right: 5px;">*</span>主内容</span>
             </template>
             <el-upload class="upload-demo" drag :action="APLOAD_RUL" multiple method="post" :auto-upload="false"
-              :accept="'.xlsx'" :file-list="fileList1" :limit="1" @change="handleUploadChange" @remove="handleUploadRemove">
+              :accept="'.xlsx'" :file-list="fileList1" :limit="1" @change="handleUploadChange"
+              @remove="handleUploadRemove">
               <el-icon class="el-icon--upload"><upload-filled /></el-icon>
               <div class="el-upload__text">
                 将文件拖到此处，或者<em>点击上传</em>
@@ -194,8 +195,8 @@
             <template #label>
               <span style="font-weight: 600;">附件</span>
             </template>
-            <el-upload class="upload-demo" :file-list="fileList2" drag :action="APLOAD_RUL" multiple method="post" :auto-upload="false"
-              @change="handleUploadChange1" @remove="handleUploadRemove1">
+            <el-upload class="upload-demo" :file-list="fileList2" drag :action="APLOAD_RUL" multiple method="post"
+              :auto-upload="false" @change="handleUploadChange1" @remove="handleUploadRemove1">
               <el-icon class="el-icon--upload"><upload-filled /></el-icon>
               <div class="el-upload__text">
                 将文件拖到此处，或者<em>点击上传</em>
@@ -205,7 +206,7 @@
         </el-form>
       </div>
       <div class="demo-drawer__footer">
-        <el-button class="pull-right" size="small" type="primary" @click="submitForm(ruleFormRef)">确
+        <el-button class="pull-right" size="small" :loading="isLoading" type="primary" @click="submitForm(ruleFormRef)">确
           定</el-button>
         <el-button class="pull-right mr20" size="small" @click="cancel">取 消</el-button>
       </div>
@@ -250,6 +251,7 @@ const toogle = ref(false)
 const statusOpen = ref(false)
 const setStatus = ref()
 const statusRow = ref('')
+const isLoading = ref(false)
 function handleStatus(row: any | null) {
   setStatus.value = '';
   statusRow.value = '';
@@ -557,6 +559,7 @@ function handleQuery() {
 }
 /** 重置按钮操作 */
 function resetQuery() {
+  showNewData.value = true;
   dateRange.value = [];
   proxy?.resetForm("queryForm");
   handleQuery();
@@ -609,6 +612,7 @@ const handleUpload = async () => {
   // return 
   const contentRes = await uploadFetch(contentFile.value)
   rulesForm.value.matrixContents = contentRes;
+  isLoading.value = true;
   if (fileList.value.length) {
     const listRes = await handleUpload1();
     console.log(listRes)
@@ -618,6 +622,7 @@ const handleUpload = async () => {
       console.log(rulesForm);
       proxy?.$modal.msgSuccess("新增成功");
       open.value = false;
+      isLoading.value = false;
       reset();
       getList();
     });
@@ -627,6 +632,7 @@ const handleUpload = async () => {
       console.log(rulesForm);
       proxy?.$modal.msgSuccess("新增成功");
       open.value = false;
+      isLoading.value = false;
       reset();
       getList();
     });
