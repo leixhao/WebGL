@@ -13,7 +13,7 @@
             </el-menu>
         </el-scrollbar>
         <!-- 配置中心 版本等 -->
-        <SubMenu :class="sideTheme === 'theme-dark'?'dark':'light'"></SubMenu>
+        <!-- <SubMenu :class="sideTheme === 'theme-dark'?'dark':'light'"></SubMenu> -->
     </div>
 </template>
 

@@ -33,7 +33,8 @@ export default {
         off:"close",
         refreshCache:'Refresh Cache',
         detail:'detail',
-        setStatus: 'Set Status'
+        setStatus: 'Set Status',
+        amendment: 'amendment'
     },
     tips:{
         tips:'Tips',

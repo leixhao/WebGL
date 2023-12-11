@@ -1,37 +1,61 @@
 // import request from '@/utils/request'
 import request from '@/utils/request'
 
+let PRE = '/ecm/'
 //
 export function getSelectList(data: any) {
     return request({
-        url: '/ecm/matrix/selectList',
+        url: PRE + 'matrix/selectList',
+        method: 'post',
+        data
+    })
+}
+export function matUpload(file:any) {
+    return request({
+        url: PRE + 'matrix/uploadFile',
+        method: 'post',
+        data: file
+    })
+}
+
+//新增
+export function addMatrix(data: any) {
+    return request({
+        url: PRE + 'matrix/addMatrix',
         method: 'post',
         data
     })
 }
 
-//
-export function addMatrix(data: any) {
+// 修订
+export function upMatVersion(ids: any) {
     return request({
-        url: '/ecm/matrix/addMatrix',
+        url: PRE + 'matrix/upVersion/' + ids,
         method: 'post',
-        data: data
     })
 }
 
-// 更新
+// 更新状态
+export function upMatStatus(params: { id: string | number, matrixStatus: string | number }) {
+    return request({
+        url: PRE + 'matrix/updateStatus',
+        method: 'get',
+        params
+    })
+}
+//
 export function updateMatrix(data: any) {
     return request({
-        url: '/ecm/matrix/updateMatrix',
+        url: PRE + 'matrix/updateMatrix',
         method: 'post',
         data: data
     })
 }
 
 
-export function remove(ids: any) {
+export function delMatrix(ids: any) {
     return request({
-        url: 'system/app/remove/' + ids,
+        url: PRE + 'matrix/' + ids,
         method: 'delete',
     })
 }

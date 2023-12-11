@@ -1,14 +1,15 @@
 <template>
   <div class="app-container">
-    <div class="contnet" ref="box">
+    <div>
+      变更流程
+    </div>
+    <!-- <div class="contnet" ref="box">
       <div class="left">
-        <!-- 侧边栏内容 -->
         <div class="resize"></div>
       </div>
       <div class="right">
-        <!-- 主体内容 -->
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 

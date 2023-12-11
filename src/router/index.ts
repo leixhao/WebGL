@@ -77,16 +77,17 @@ export const constantRoutes: RouteRecordRaw[] = [
     },
     {
         path: '',
+        hidden: true,
         component: Layout,
         redirect: '/index',
-        children: [
-            {
-                path: '/index',
-                component: () => import('@/views/index.vue'),
-                name: 'Index',
-                meta: { title: '首页', icon: 'dashboard', affix: true },
-            },
-        ],
+        // children: [
+        //     {
+        //         path: '/index',
+        //         component: () => import('@/views/template/matrix/index.vue'),
+        //         name: 'Index',
+        //         meta: { title: '变更矩阵', icon: 'dashboard', affix: true },
+        //     },
+        // ],
     },
     {
         path: '/template',
@@ -95,7 +96,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         meta: { title: '模板管理', icon: 'dashboard'},
         children: [
             {
-                path: '/matrix',
+                path: '/index',
                 component: () => import('@/views/template/matrix/index.vue'),
                 name: 'matrix',
                 meta: { title: '变更矩阵', icon: 'dashboard' },
