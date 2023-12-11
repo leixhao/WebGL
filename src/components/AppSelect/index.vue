@@ -45,28 +45,6 @@ const appList = ref([])
 const from = ref({
   appId: null
 })
-const sideTheme = computed(() => settingsStore.sideTheme);
-function handleSelect(value) {
-  regenerate(value).then((response) => {
-    appList.value.forEach((el) => {
-      if (el.appId == value) {
-        title.value = el.appAbbr;
-        sessionStorage.setItem('title', el.appAbbr)
-        sessionStorage.setItem('appId', value)
-      }
-    });
-    window.location.href = window.location.origin + "/index";
-  });
-}
-function queryAppList() {
-  appList.value = []; //任务大类字典
-  getAppList().then((response) => {
-    appList.value = response.data;
-    let val = sessionStorage.getItem('appId');
-    title.value = sessionStorage.getItem('title') || appList.value.find(item => item.appId == val).appAbbr
-  });
-}
-queryAppList();
 </script>
 
 <style lang="scss" scoped>

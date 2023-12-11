@@ -36,7 +36,8 @@ export default {
         off: "关闭",
         refreshCache: '刷新缓存',
         detail: '详细',
-        setStatus: '设置状态'
+        setStatus: '设置状态',
+        amendment: '修订'
     },
     tips: {
         tips: '提示',
