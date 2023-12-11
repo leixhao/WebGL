@@ -8,14 +8,14 @@
       </div>
     </header>
     <div class="right-form">
-      <el-input
+      <!-- <el-input
         v-model="Search"
         @keyup.enter="handleSearch"
         placeholder="输入搜索关键字"
         clearable
         maxlength="20"
       ></el-input>
-      <el-button type="primary" @click="handleSearch">搜索</el-button>
+      <el-button type="primary" @click="handleSearch">搜索</el-button> -->
     </div>
   </div>
   <UploadFile url="http://www.baidu.com" @update="show = false" :open="show"></UploadFile>

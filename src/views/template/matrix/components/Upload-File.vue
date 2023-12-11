@@ -11,7 +11,7 @@
     <el-upload
       class="upload-demo"
       drag
-      :action="APLOAD_RUL"
+      :action="props.url"
       multiple
       :accept="accept"
       :limit="1"
@@ -42,7 +42,7 @@
 import { getToken } from "@/utils/auth";
 import { getCurrentInstance, ComponentInternalInstance, ref, computed } from "vue";
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
-const APLOAD_RUL = "/ecm/";
+const APLOAD_RUL =import.meta.env.VITE_APP_BASE_API;
 const props = defineProps({
   url: {
     type: String,
@@ -81,6 +81,7 @@ function handleClose() {
   emit("update", false);
 }
 function handleBeforeUpload(file:any) {
+  console.log(APLOAD_RUL);
   // 检验类型 和大小
   console.log(file, 111);
   if (props.fileType.length) {
@@ -102,7 +103,7 @@ function handleBeforeUpload(file:any) {
       return false;
     }
   }
-  proxy?.$modal.loading("正在上传文件，请稍候...");
+  // proxy?.$modal.loading("正在上传文件，请稍候...");
   return true;
 }
 const FileUpload = ref(null);

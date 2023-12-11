@@ -21,7 +21,7 @@
               </el-tooltip>
               <el-tooltip content="替换" placement="bottom" effect="dark">
                 <el-icon @click="handleUpload(v, item)"><Switch /></el-icon> </el-tooltip
-              ><el-tooltip content="删除" placement="bottom" effect="dark">
+              ><el-tooltip content="删除" v-if="v.name!='Content'" placement="bottom" effect="dark">
                 <el-icon @click="handleDelete(v, item)"><Delete /></el-icon>
               </el-tooltip>
             </div>
@@ -30,13 +30,12 @@
       </li>
     </ul>
     <UploadFile
-      url="http://www.baidu.com"
+      url="/ecm/matrix/uploadContentFile"
       @update="show = false"
       :open="show"
     ></UploadFile>
   </div>
 </template>
-
 <script lang="ts" setup>
 import UploadFile from "./Upload-File.vue";
 import { deleteMatrixAttach, deleteMatrixContent } from "@/api/template/matrix";

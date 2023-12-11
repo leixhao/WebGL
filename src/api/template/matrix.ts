@@ -73,3 +73,17 @@ export function getUpVersionLog(data:any){
         method:'get',
     })
 }
+// 步骤
+export function getStep(data:any){
+    return request({
+        url: `/ecm/matrix/selectChangeLogList/${data.matrixId}`,
+        method:'post',
+    })
+}
+// 变更记录
+export function updateStatus(data:any){
+    return request({
+        url: `/ecm/matrix/updateStatus/${data.matrixId}`,
+        method:'get',
+    })
+}
