@@ -1,8 +1,10 @@
 <template>
   <div class="Steps-Page">
     <div class="sort">
-      <el-tooltip content="按时间排序" placement="bottom" effect="light"  v-if="stepsList.length!=0">
-        <el-icon @click="handleSort"><Sort /></el-icon>
+      <el-tooltip content="按时间排序" placement="bottom" effect="light" v-if="stepsList.length != 0">
+        <el-icon @click="handleSort">
+          <Sort />
+        </el-icon>
       </el-tooltip>
     </div>
     <el-steps direction="vertical" class="profile-steps">
@@ -30,13 +32,13 @@
         </template>
       </el-step>
     </el-steps>
-    <div class="notData" v-if="stepsList.length==0">暂无数据</div>
+    <div class="notData" v-if="stepsList.length == 0">暂无数据</div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { getStep } from "@/api/template/matrix";
-import { ref ,getCurrentInstance, ComponentInternalInstance} from "vue";
+import { ref, getCurrentInstance, ComponentInternalInstance } from "vue";
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const stepsList = ref([]);
 function handleUser(row: {}) {
@@ -49,7 +51,7 @@ function init(matrixId: number) {
   console.log(matrixId);
   getStep({
     matrixId,
-  }).then((res) => {
+  }).then((res: any) => {
     stepsList.value = res?.rows;
   });
 }
@@ -63,22 +65,27 @@ defineExpose({
     margin-bottom: 10px;
     display: flex;
     justify-content: flex-end;
+
     .el-icon {
       font-size: 18px;
       color: #656565;
       cursor: pointer;
     }
   }
+
   .profile-steps {
     padding-left: 30px;
+
     :deep(.el-step__icon) {
       height: 28px;
     }
+
     .icon-content {
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
+
       .type-icon {
         // margin-right: 10px;
         position: absolute;
@@ -88,11 +95,13 @@ defineExpose({
         font-size: 20px;
         color: #999;
       }
+
       img {
         height: 30px;
         border-radius: 50%;
         max-width: none;
       }
+
       // .type-icon {
       //   position: absolute;
       //   font-size: 18px;
@@ -104,31 +113,38 @@ defineExpose({
     :deep(.el-step__description) {
       padding-right: 0%;
     }
+
     .name {
       color: #3eacef;
     }
+
     .row {
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
       font-size: 13px;
       margin: 15px 0 20px;
+
       .subTitle {
         flex: 1;
       }
+
       .createTime {
         width: 125px;
       }
     }
   }
-  .notData{
-    height:300px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+
+  .notData {
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: #b4b0b0;
   }
-  :deep(.is-process),:deep(.is-wait) {
+
+  :deep(.is-process),
+  :deep(.is-wait) {
     color: #999 !important;
   }
 }

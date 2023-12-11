@@ -5,12 +5,12 @@ let PRE = '/ecm/'
 //
 export function getSelectList(data: any) {
     return request({
-        url: PRE + 'matrix/selectList' + '?pageNum=' + data.pageNum +'&pageSize=' + data.pageSize,
+        url: PRE + 'matrix/selectList' + '?pageNum=' + data.pageNum + '&pageSize=' + data.pageSize,
         method: 'post',
         data
     })
 }
-export function matUpload(file:any) {
+export function matUpload(file: any) {
     return request({
         url: PRE + 'matrix/uploadFile',
         method: 'post',
@@ -68,46 +68,46 @@ export function getSecret(appId: string) {
 }
 
 // 获取详情
-export function getMatrixDetail(data:any){
+export function getMatrixDetail(data: any) {
     return request({
         url: `/ecm/matrix/selectMatrixById/${data.matrixId}`,
         method: 'post',
     })
 }
 // 删除MatrixAttach
-export function deleteMatrixAttach(data:any){
+export function deleteMatrixAttach(data: any) {
     return request({
         url: `/ecm/matrix/deleteMatrixAttach`,
-        method:'delete',
-        data
+        method: 'get',
+        params: data
     })
 }
 // 删除content 
-export function deleteMatrixContent(data:any){
+export function deleteMatrixContent(data: any) {
     return request({
         url: `/ecm/matrix/deleteMatrixContent`,
-        method:'delete',
+        method: 'delete',
         data
     })
 }
 // 获取历史记录
-export function getUpVersionLog(data:any){
+export function getUpVersionLog(data: any) {
     return request({
         url: `/ecm/matrix/selectUpVersionLogList/${data.id}`,
-        method:'get',
+        method: 'get',
     })
 }
 // 步骤
-export function getStep(data:any){
+export function getStep(data: any) {
     return request({
         url: `/ecm/matrix/selectChangeLogList/${data.matrixId}`,
-        method:'post',
+        method: 'post',
     })
 }
 // 变更记录
-export function updateStatus(data:any){
+export function updateStatus(data: any) {
     return request({
         url: `/ecm/matrix/updateStatus/${data.matrixId}`,
-        method:'get',
+        method: 'get',
     })
 }

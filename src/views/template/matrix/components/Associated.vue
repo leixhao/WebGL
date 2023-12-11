@@ -6,7 +6,9 @@
         <div class="row name">
           <span>{{ v.name }}</span>
           <el-tooltip content="上传" placement="bottom" effect="dark">
-            <el-icon @click="handleUpload(v, '')"><Upload /></el-icon>
+            <el-icon @click="handleUpload(v, '')">
+              <Upload />
+            </el-icon>
           </el-tooltip>
         </div>
         <div v-for="item in v.items">
@@ -14,26 +16,30 @@
             <span>{{ item.fileName }}</span>
             <div class="icon-list">
               <el-tooltip content="查阅" placement="bottom" effect="dark">
-                <el-icon><View /></el-icon>
+                <el-icon>
+                  <View />
+                </el-icon>
               </el-tooltip>
               <el-tooltip content="下载" placement="bottom" effect="dark">
-                <el-icon><Download /></el-icon>
+                <el-icon>
+                  <Download />
+                </el-icon>
               </el-tooltip>
               <el-tooltip content="替换" placement="bottom" effect="dark">
-                <el-icon @click="handleUpload(v, item)"><Switch /></el-icon> </el-tooltip
-              ><el-tooltip content="删除" v-if="v.name!='Content'" placement="bottom" effect="dark">
-                <el-icon @click="handleDelete(v, item)"><Delete /></el-icon>
+                <el-icon @click="handleUpload(v, item)">
+                  <Switch />
+                </el-icon> </el-tooltip><el-tooltip content="删除" v-if="v.name != 'Content'" placement="bottom"
+                effect="dark">
+                <el-icon @click="handleDelete(v, item)">
+                  <Delete />
+                </el-icon>
               </el-tooltip>
             </div>
           </div>
         </div>
       </li>
     </ul>
-    <UploadFile
-      url="/ecm/matrix/uploadContentFile"
-      @update="show = false"
-      :open="show"
-    ></UploadFile>
+    <UploadFile url="/ecm/matrix/uploadContentFile" @update="show = false" :open="show"></UploadFile>
   </div>
 </template>
 <script lang="ts" setup>
@@ -74,7 +80,12 @@ function init(data: any) {
   let Attachments = [];
   let Contents: any = [];
   if (data.matrixAttachments) {
-    Attachments = JSON.parse(data.matrixAttachments);
+    let arr = JSON.parse(data.matrixAttachments).map((item: any) => {
+      return JSON.parse(item)
+    })
+    console.log(arr)
+    Attachments = arr;
+    console.log(Attachments)
   }
   if (data.matrixContents) {
     Contents = [JSON.parse(data.matrixContents)];
@@ -101,6 +112,7 @@ defineExpose({
   ul {
     max-height: 600px;
     overflow: auto;
+
     li {
       margin-bottom: 10px;
       padding: 10px 15px;
@@ -108,33 +120,40 @@ defineExpose({
       width: 100%;
       border: 1px solid #d5d5d5;
       border-radius: 4px;
+
       .row {
         width: 100%;
         display: flex;
         justify-content: space-between;
         align-items: center;
         cursor: pointer;
+
         &.name {
           span {
             text-decoration: underline;
             font-size: 16px;
             color: #656565;
             cursor: pointer;
+
             &:hover {
               opacity: 0.8;
             }
           }
         }
+
         &.subtitle {
           margin: 5px 0;
           border-bottom: 1px solid transparent;
-          & > span {
+
+          &>span {
             color: #959595;
             font-size: 13px;
           }
+
           &:hover {
             border-bottom: 1px solid #e5e5e5;
-            & > span {
+
+            &>span {
               color: #656565;
             }
           }
@@ -142,18 +161,22 @@ defineExpose({
 
         .icon-list {
           display: none;
+
           .el-icon {
             margin-left: 8px;
           }
         }
+
         &:hover .icon-list {
           display: inline-block;
         }
       }
+
       .el-icon {
         cursor: pointer;
         color: #959595;
         font-size: 19px;
+
         &:hover {
           color: #409eff;
         }

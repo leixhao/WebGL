@@ -1,12 +1,5 @@
 <template>
-  <el-drawer
-    v-model="open"
-    title="I am the title"
-    append-to-body
-    :with-header="false"
-    @close="handleColse"
-    :size="600"
-  >
+  <el-drawer v-model="open" title="I am the title" append-to-body :with-header="false" @close="handleColse" :size="600">
     <div class="matrix-profile-content">
       <div class="profile-header">
         <div class="profile-left">
@@ -14,11 +7,11 @@
         </div>
         <div class="profile-right">
           <div class="profile-text">
-            EACH-WI-PS-0356,RevA0 组合式空调设施自主性维护检查说明
+            {{ Info.matrixName }}
           </div>
           <div>
-            <span class="profile-name">San.Zhang</span
-            ><span class="profile-time">2023/08/21 15:26:30 CST</span>
+            <span class="profile-name">{{ Info.createByName }}</span>
+            <span class="profile-time">{{ Info.createTime }}</span>
           </div>
         </div>
       </div>
@@ -27,7 +20,7 @@
           <el-tab-pane label="对象属性" name="first">
             <Form ref="form" @update="update"></Form>
           </el-tab-pane>
-          <el-tab-pane label="相关对象" name="second">
+          <!-- <el-tab-pane label="相关对象" name="second">
             <div class="left-button">
               <el-tooltip content="导出" placement="bottom" effect="dark">
                 <el-button
@@ -107,7 +100,7 @@
               </el-table>
             </div>
             </div>
-          </el-tab-pane>
+          </el-tab-pane> -->
           <el-tab-pane label="相关文档" name="third">
             <Associated ref="AssociatedRefs" @update:modelValue="getList"></Associated>
           </el-tab-pane>
@@ -117,81 +110,22 @@
           <el-tab-pane label="历史记录" name="fifth">
             <div class="left-button">
               <el-tooltip content="上传" placement="bottom" effect="dark">
-                <el-button
-                  @click="handleUpload(2)"
-                  type="primary"
-                  plain
-                  circle
-                  icon="DocumentAdd"
-                />
+                <el-button @click="handleUpload(2)" type="primary" plain circle icon="DocumentAdd" />
               </el-tooltip>
             </div>
             <div class="table-container">
               <el-table :data="fifthTable" border style="width: 100%">
-                <el-table-column
-                  prop="code"
-                  show-overflow-tooltip
-                  align="center"
-                  label="编号"
-                >
+                <el-table-column prop="code" show-overflow-tooltip align="center" label="编号">
                 </el-table-column>
-                <el-table-column
-                  prop="name"
-                  show-overflow-tooltip
-                  align="center"
-                  label="名称"
-                />
-                <el-table-column
-                  prop="current"
-                  show-overflow-tooltip
-                  align="center"
-                  label="版本"
-                />
-                <el-table-column
-                  prop="name"
-                  show-overflow-tooltip
-                  align="center"
-                  label="状态"
-                />
-                <el-table-column
-                  prop="name"
-                  show-overflow-tooltip
-                  align="center"
-                  label="所有者"
-                />
-                <el-table-column
-                  prop="createByName"
-                  show-overflow-tooltip
-                  align="center"
-                  label="创建者"
-                />
-                <el-table-column
-                  prop="createTime"
-                  show-overflow-tooltip
-                  align="center"
-                  width="180"
-                  label="创建时间"
-                />
-                <el-table-column
-                  prop="name"
-                  show-overflow-tooltip
-                  align="center"
-                  label="修改者"
-                />
-                <el-table-column
-                  prop="name"
-                  show-overflow-tooltip
-                  align="center"
-                  width="180"
-                  label="修改时间"
-                />
-                <el-table-column
-                  prop="name"
-                  show-overflow-tooltip
-                  align="center"
-                  width="200"
-                  label="备注"
-                />
+                <el-table-column prop="name" show-overflow-tooltip align="center" label="名称" />
+                <el-table-column prop="current" show-overflow-tooltip align="center" label="版本" />
+                <el-table-column prop="name" show-overflow-tooltip align="center" label="状态" />
+                <el-table-column prop="name" show-overflow-tooltip align="center" label="所有者" />
+                <el-table-column prop="createByName" show-overflow-tooltip align="center" label="创建者" />
+                <el-table-column prop="createTime" show-overflow-tooltip align="center" width="180" label="创建时间" />
+                <el-table-column prop="name" show-overflow-tooltip align="center" label="修改者" />
+                <el-table-column prop="name" show-overflow-tooltip align="center" width="180" label="修改时间" />
+                <el-table-column prop="name" show-overflow-tooltip align="center" width="200" label="备注" />
               </el-table>
               <!-- <div class="page-container">
                 <el-pagination
@@ -210,11 +144,7 @@
           </el-tab-pane>
         </el-tabs>
       </div>
-      <UploadFile
-        url="http://www.baidu.com"
-        @update="show = false"
-        :open="show"
-      ></UploadFile>
+      <UploadFile url="http://www.baidu.com" @update="show = false" :open="show"></UploadFile>
     </div>
   </el-drawer>
 </template>
@@ -233,7 +163,11 @@ const { t } = useI18n();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 let open = ref(false);
 let activeName = ref("first");
-const Info = ref();
+const Info = ref({
+  matrixName: undefined,
+  createByName: undefined,
+  createTime: undefined
+});
 const form = ref();
 const AssociatedRefs = ref();
 const stepRefs = ref();
@@ -243,6 +177,7 @@ const Row = ref({
 const emit = defineEmits(["update"]);
 function update() {
   emit("update");
+  (proxy?.$refs['stepRefs'] as any)?.init(Row.value.id);
 }
 function toogleShow(row: any) {
   Row.value = row;
@@ -284,7 +219,7 @@ function handleUpload(type: number) {
   }
 }
 const tableData = ref([]);
-function handleClick(tab: object) {}
+function handleClick(tab: object) { }
 defineExpose({
   toogleShow,
 });
@@ -293,10 +228,12 @@ defineExpose({
 .matrix-profile-content {
   padding: 0 10px;
   height: 100%;
+
   .left-button {
     font-size: 18px;
     margin-bottom: 10px;
   }
+
   .profile-header {
     display: flex;
 
@@ -331,13 +268,17 @@ defineExpose({
       }
     }
   }
+
   .profile-content {
     padding: 10px 0;
     height: calc(100% - 60px);
+
     .el-tabs {
       height: 100%;
+
       :deep(.el-tabs__content) {
         height: calc(100% - 50px);
+
         .el-tab-pane {
           height: 100%;
         }
