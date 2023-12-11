@@ -36,9 +36,9 @@ service.interceptors.request.use(
             config.headers['Authorization'] = 'Bearer ' + getToken(); // 让每个请求携带自定义token 请根据实际情况自行修改
             if (useAppStore().language == 'zh') {
                 config.headers['Content-Language'] = 'zh_CN'
-              } else {
+            } else {
                 config.headers['Content-Language'] = 'en_US'
-              }
+            }
         }
         // get请求映射params参数
         if (config.method === 'get' && config.params) {
@@ -60,10 +60,12 @@ service.interceptors.request.use(
                 const s_url = sessionObj.url; // 请求地址
                 const s_data = sessionObj.data; // 请求数据
                 const s_time = sessionObj.time; // 请求时间
-                const interval = 1000; // 间隔时间(ms)，小于此时间视为重复提交
+                // 增加文件上传间隔时间过短处理
+                const intervalMax = 1000; // 间隔时间(ms)，小于此时间视为重复提交
+                const intervalMin = 500; // 间隔时间(ms)，小于此时间视为重复提交
                 if (
                     s_data === requestObj.data &&
-                    requestObj.time - s_time < interval &&
+                    intervalMin < requestObj.time - s_time && requestObj.time - s_time < intervalMax &&
                     s_url === requestObj.url
                 ) {
                     const message = '数据正在处理，请勿重复提交';

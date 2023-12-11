@@ -2,21 +2,28 @@
     <div class="top-left-btn" :style="style">
         <el-row>
             <el-tooltip v-if="add" :content="t('button.new')" placement="top">
-                <el-button circle icon="DocumentAdd" @click="handleChange('docAdd')" />
+                <el-button icon="DocumentAdd" type="primary" plain @click="handleChange('docAdd')">新增</el-button>
             </el-tooltip>
             <el-tooltip v-if="del" :content="t('button.delete')" placement="top">
-                <el-button circle icon="Delete" :disabled="delDis" @click="handleChange('docDelete')" />
+                <el-button icon="Delete" type="danger" plain :disabled="delDis"
+                    @click="handleChange('docDelete')">删除</el-button>
             </el-tooltip>
-            <el-tooltip v-if="edit" :content="t('button.edit')" placement="top">
-                <el-button circle icon="EditPen" :disabled="editDis" @click="handleChange('docEdit')" />
+            <el-tooltip v-if="edit" :content="t('button.amendment')" placement="top">
+                <el-button :disabled="delDis" plain type="warning" @click="handleChange('docEdit')">
+                    <template #icon>
+                        <img src="@/assets/images/amendmentLight.png" alt="" :key="Math.random()"
+                            :style="delDis ? 'opacity: .5;' : 'opacity: 1'">
+                    </template>
+                    修订</el-button>
             </el-tooltip>
             <el-tooltip v-if="showSet" :content="t('button.setStatus')" placement="top">
-                <el-button circle icon="Switch" :disabled="editDis" @click="handleChange('docStatus')" />
+                <el-button icon="Switch" :disabled="editDis" plain type="info"
+                    @click="handleChange('docStatus')">设置状态</el-button>
             </el-tooltip>
-            <el-tooltip v-if="showToogle" :content="t('button.setStatus')" placement="top">
+            <el-tooltip v-if="showToogle" :content="'显示最新'" placement="top">
                 <el-switch :model-value="toogle" @change="handleToogle($event)" style="margin:0 10px" />
             </el-tooltip>
-            <el-tooltip v-if="showExport" :content="t('button.setStatus')" placement="top">
+            <el-tooltip v-if="showExport" :content="'导出'" placement="top">
                 <el-button circle icon="Upload" @click="handleChange('docExport')" />
             </el-tooltip>
             <!-- <el-tooltip v-if="search" class="item" effect="dark" :content="showSearch ? '隐藏搜索' : '显示搜索'" placement="top">
@@ -33,6 +40,7 @@
 </template>
 
 <script setup lang="ts">
+import { Warning } from '@element-plus/icons-vue';
 import { type } from 'os';
 import { ref, computed } from 'vue';
 import { useI18n } from "vue-i18n";
@@ -69,11 +77,11 @@ const props = defineProps({
     },
     showToogle: {
         type: Boolean,
-        default: true,
+        default: false,
     },
     showExport: {
         type: Boolean,
-        default: true,
+        default: false,
     },
     showSearch: {
         type: Boolean,

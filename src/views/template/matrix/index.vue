@@ -3,9 +3,9 @@
     <div class="container-left">
       <el-row :gutter="10" class="mb20">
         <el-col :span="24" :xs="24">
-          <el-form v-show="showSearch" @submit.prevent ref="queryRef" :model="queryParams" :inline="true">
-            <el-form-item :label="''" prop="search">
-              <el-input v-model="queryParams.search" placeholder="请输入搜索关键字" clearable style="width: 240px"
+          <el-form v-show="showSearch" @submit.prevent ref="queryForm" :model="queryParams" :inline="true">
+            <el-form-item :label="''" prop="matrixNo">
+              <el-input v-model="queryParams.matrixNo" placeholder="请输入搜索关键字" clearable style="width: 240px"
                 @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item>
@@ -14,8 +14,8 @@
             </el-form-item>
           </el-form>
         </el-col>
-        <left-toolbar v-model:showSearch="showSearch" :show-export="false" :delDis="multiple" :editDis="single"
-          v-model:toogle="toogle" @docAdd="handleAdd" @docDelete="handleDelete" @docEdit="handleEdit"
+        <left-toolbar v-model:showSearch="showSearch" :delDis="multiple" :editDis="single" v-model:toogle="toogle"
+          @docAdd="handleAdd" @docDelete="handleDelete" @docEdit="handleEdit" @docStatus="handleStatus"
           @queryTable="getList"></left-toolbar>
         <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
@@ -28,14 +28,28 @@
                 @selection-change="handleSelectionChange">
                 <el-table-column align="center" width="45" />
                 <el-table-column type="selection" align="center" width="80" />
-                <el-table-column :label="t('table.number')" prop="matrixNo" min-width="150">
+                <el-table-column :label="t('table.number')" prop="matrixNo" min-width="100">
                 </el-table-column>
                 <el-table-column :label="t('table.name')" prop="matrixName" :show-overflow-tooltip="true"
                   min-width="100" />
                 <el-table-column :label="t('table.version')" prop="matrixRevision" :show-overflow-tooltip="true"
-                  min-width="100" />
+                  width="60" />
                 <el-table-column :label="t('table.status')" prop="matrixStatus" :show-overflow-tooltip="true"
                   min-width="100">
+                  <template #default="scope">
+                    <!-- <span>{{ scope.row.matrixStatus }}</span> -->
+                    <span v-if="scope.row.matrixStatus == 2">
+                      <el-button type="success">{{ statusOptions.filter(item => item.value ==
+                        scope.row.matrixStatus)[0].label
+                      }}</el-button>
+                    </span>
+                    <span v-else-if="scope.row.matrixStatus == 4">
+                      <el-button type="danger">{{ statusOptions.filter(item => item.value ==
+                        scope.row.matrixStatus)[0].label
+                      }}</el-button>
+                    </span>
+                    <span v-else>{{ statusOptions.filter(item => item.value == scope.row.matrixStatus)[0].label }}</span>
+                  </template>
                 </el-table-column>
                 <el-table-column :label="t('table.creator')" prop="createByName" :show-overflow-tooltip="true"
                   min-width="100" />
@@ -63,28 +77,48 @@
           </template>
         </el-table-column>
         <el-table-column type="selection" align="center" width="80" />
-        <el-table-column :label="t('table.number')" :prop="toogle ? 'title' : 'matrixNo'" min-width="150" />
+        <el-table-column :label="t('table.number')" :prop="toogle ? 'title' : 'matrixNo'" min-width="100" />
         <el-table-column :label="t('table.name')" prop="matrixName" :show-overflow-tooltip="true" min-width="100" />
-        <el-table-column :label="t('table.version')" prop="matrixRevision" :show-overflow-tooltip="true"
-          min-width="100" />
+        <el-table-column :label="t('table.version')" prop="matrixRevision" :sortable="toogle ? false : true"
+          :show-overflow-tooltip="true" width="80" />
         <el-table-column :label="t('table.status')" prop="matrixStatus" :show-overflow-tooltip="true" min-width="100">
-          <!-- <template #default="scope">
-          <span v-if="scope.row.type == '1'">邮件模板</span>
-          <span v-else>企业微信模板</span>
-        </template> -->
+          <template #default="scope">
+            <!-- <span>{{ scope.row.matrixStatus }}</span> -->
+            <span v-if="scope.row.matrixStatus == 2">
+              <el-button type="success">{{ statusOptions.filter(item => item.value == scope.row.matrixStatus)[0].label
+              }}</el-button>
+            </span>
+            <span v-else-if="scope.row.matrixStatus == 4">
+              <el-button type="danger">{{ statusOptions.filter(item => item.value == scope.row.matrixStatus)[0].label
+              }}</el-button>
+            </span>
+            <span v-else>{{ statusOptions.filter(item => item.value == scope.row.matrixStatus)[0].label }}</span>
+          </template>
         </el-table-column>
         <el-table-column :label="t('table.creator')" prop="createByName" :show-overflow-tooltip="true" min-width="100" />
-        <el-table-column :label="t('table.creatime')" prop="createTime" :show-overflow-tooltip="true" min-width="100" />
+        <el-table-column :label="t('table.creatime')" prop="createTime" :sortable="toogle ? false : true"
+          :show-overflow-tooltip="true" min-width="100" />
         <el-table-column :label="t('table.modifiedBy')" prop="updateByName" :show-overflow-tooltip="true"
           min-width="100" />
         <el-table-column :label="t('table.modifiedTime')" prop="updateTime" :show-overflow-tooltip="true"
           min-width="120" />
         <el-table-column :label="t('table.remarks')" prop="matrixRemarks" :show-overflow-tooltip="true" min-width="100" />
-        <el-table-column :label="t('table.action')" min-width="150" fixed="right" align="center" class="qw"
+        <el-table-column :label="t('table.action')" min-width="300" fixed="right" align="center" class="qw"
           class-name="small-padding fixed-width">
           <template #default="scope" v-if="!toogle">
-            <el-button size="small" link type="primary" icon="Edit" @click="handleUpdate(scope.row)">{{ $t('button.edit')
-            }}</el-button>
+            <el-button size="small" link type="primary" @click="handleUpdate(scope.row)">
+              <template #icon>
+                <img src="@/assets/images/look.png" alt="">
+              </template>
+              查看
+            </el-button>
+            <el-button size="small" link type="primary" @click="handleEdit(scope.row)">
+              <template #icon>
+                <img src="@/assets/images/amendmentBlue.png" alt="">
+              </template>
+              修订</el-button>
+            <el-button size="small" link type="primary" icon="Switch" @click="handleStatus(scope.row)">
+              设置状态</el-button>
             <el-button size="small" link type="primary" icon="Delete" @click="handleDelete(scope.row)">{{
               $t('button.delete')
             }}</el-button>
@@ -102,8 +136,11 @@
     <el-dialog :title="title" v-model="open" append-to-body>
       <div class="demo-drawer__content">
         <el-form class="m20" ref="ruleFormRef" :model="rulesForm" :rules="rules" label-width="120px">
-          <el-form-item label="对应类型" prop="matrixType">
+          <!-- <el-form-item label="对应类型" prop="matrixType">
             <el-tree-select v-model="rulesForm.matrixType" :data="typeData" :render-after-expand="false" />
+          </el-form-item> -->
+          <el-form-item label="对应类型" prop="matrixType">
+            <el-input v-model="rulesForm.matrixType" style="width: 200px"></el-input>
           </el-form-item>
           <el-form-item label="名称" prop="matrixName">
             <el-input v-model="rulesForm.matrixName" style="width: 200px"></el-input>
@@ -116,8 +153,8 @@
               <span style="font-weight: 600;"><span
                   style="color: red;display: inline-block;margin-right: 5px;">*</span>主内容</span>
             </template>
-            <el-upload class="upload-demo" drag :action="APLOAD_RUL" :auto-upload="false" multiple :accept="'.xlsx'"
-              :limit="1" @change="handleUploadChange" @remove="handleUploadRemove">
+            <el-upload class="upload-demo" drag :action="APLOAD_RUL" multiple method="post" :auto-upload="false"
+              :accept="'.xlsx'" :limit="1" @change="handleUploadChange" @remove="handleUploadRemove">
               <el-icon class="el-icon--upload"><upload-filled /></el-icon>
               <div class="el-upload__text">
                 将文件拖到此处，或者<em>点击上传</em>
@@ -129,11 +166,12 @@
               </template>
             </el-upload>
           </el-form-item>
+          <!-- <el-button @click="handleClick1">点击</el-button> -->
           <el-form-item>
             <template #label>
               <span style="font-weight: 600;">附件</span>
             </template>
-            <el-upload class="upload-demo" drag :action="APLOAD_RUL" :auto-upload="false" multiple
+            <el-upload class="upload-demo" drag :action="APLOAD_RUL" multiple method="post" :auto-upload="false"
               @change="handleUploadChange1" @remove="handleUploadRemove1">
               <el-icon class="el-icon--upload"><upload-filled /></el-icon>
               <div class="el-upload__text">
@@ -149,7 +187,19 @@
         <el-button class="pull-right mr20" size="small" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-    <profile ref="profileRef"  @update="getList"></profile>
+    <el-dialog :title="'设置状态'" v-model="statusOpen" width="30%" align-center append-to-body>
+      <el-select v-model="setStatus" placeholder="设置状态" clearable style="width: 100%">
+        <el-option v-for="dict in statusOptions" :key="dict.value" :label="dict.label" :value="dict.value" />
+      </el-select>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="statusOpen = false">取消</el-button>
+          <el-button type="primary" @click="handleStatusChange">
+            提交
+          </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -157,7 +207,11 @@
 import {
   addMatrix,
   updateMatrix,
-  getSelectList
+  getSelectList,
+  delMatrix,
+  upMatStatus,
+  matUpload,
+  upMatVersion
 } from "@/api/template/matrix";
 import { getCurrentInstance, ComponentInternalInstance, ref, watch } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus'
@@ -170,15 +224,53 @@ const { sys_common_status } = proxy!.useDict('sys_common_status');
 const ruleFormRef = ref<FormInstance>()
 const queryForm = ref<FormInstance>()
 const toogle = ref(false)
-const APLOAD_RUL = '/ecm/'
-const typeOptions = ref([
+const statusOpen = ref(false)
+const setStatus = ref()
+const statusRow = ref('')
+function handleStatus(row: any | null) {
+  setStatus.value = '';
+  statusRow.value = '';
+  statusOpen.value = true;
+  if (row?.id) {
+    statusRow.value = row.id;
+  }
+}
+
+// 状态修改
+function handleStatusChange() {
+  if (!setStatus.value) {
+    proxy?.$modal.msgWarning("请选择修改状态！");
+  }
+  const id = statusRow.value || ids.value.join(',');
+  upMatStatus({ id: id, matrixStatus: setStatus.value }).then(res => {
+    proxy?.$modal.msgSuccess("修改成功");
+    statusOpen.value = false;
+    getList();
+  })
+}
+console.log(import.meta.env.VITE_APP_BASE_API)
+const APLOAD_RUL = import.meta.env.VITE_APP_BASE_API + '/ecm/matrix/uploadFile'
+// 1.正在工作 2.已发布 3.冻结 4.废弃 5.审核中
+const statusOptions = ref([
   {
     value: 1,
-    label: "邮件模板",
+    label: "正在工作",
   },
   {
     value: 2,
-    label: "企业微信模板",
+    label: "已发布",
+  },
+  {
+    value: 3,
+    label: "冻结",
+  },
+  {
+    value: 4,
+    label: "废弃",
+  },
+  {
+    value: 5,
+    label: "审核中",
   },
 ])
 const matrixType = ref();
@@ -274,7 +366,7 @@ const open = ref(false);
 const dateRange = ref([])
 // 查询参数
 const queryParams = ref({
-  search: undefined,
+  matrixNo: undefined,
   pageNum: 1,
   pageSize: 10,
 })
@@ -288,21 +380,13 @@ const stateOption = ref([
     label: "否",
   },
 ])
-interface Form {
-  id: string
-  matrixType: undefined,
-  matrixName: undefined,
-  matrixRemarks: undefined,
-  matrixContents: undefined,
-  matrixAttachments: any
-}
 const rulesForm = ref({
   id: undefined,
   matrixType: '',
   matrixName: undefined,
   matrixRemarks: undefined,
   matrixContents: undefined,
-  matrixAttachments: []
+  matrixAttachments: ''
 })
 const rules = ref({
   matrixType: [
@@ -386,28 +470,13 @@ function getList() {
       delete obj[key]
     }
   })
-  getSelectList({}).then(
+  getSelectList(obj).then(
     (response: any) => {
       templateList.value = response.rows;
       total.value = response.total;
       loading.value = false;
     }
   );
-}
-// 角色状态修改
-function handleStatusChange(row: any) {
-  let text = row.enable ? "启用" : "停用";
-  proxy?.$modal
-    .confirm('确认要"' + text + '"模板吗？')
-    .then(function () {
-      return changeTemplateStatus(row);
-    })
-    .then(() => {
-      proxy?.$modal.msgSuccess(text + "成功");
-    })
-    .catch(function () {
-      row.enable = !row.enable;
-    });
 }
 // 取消按钮
 function cancel() {
@@ -419,18 +488,17 @@ function reset() {
   rulesForm.value = {
     id: undefined,
     matrixType: '',
-    matrixName: undefined,
-    matrixRemarks: undefined,
-    matrixContents: undefined,
-    matrixAttachments: <any>[]
+    matrixName: <any>undefined,
+    matrixRemarks: <any>undefined,
+    matrixContents: <any>undefined,
+    matrixAttachments: ''
   };
-  console.log(234)
   proxy?.resetForm("ruleFormRef");
 }
 /** 搜索按钮操作 */
 function handleQuery() {
-  queryParams.value.search = !!queryParams.value.search
-    ? queryParams.value.search
+  queryParams.value.matrixNo = !!queryParams.value.matrixNo
+    ? queryParams.value.matrixNo
     : undefined;
   queryParams.value.pageNum = 1;
   getList();
@@ -457,33 +525,87 @@ function handleAdd() {
 function handleUpdate(row: any) {
   (proxy?.$refs['profileRef'] as any)?.toogleShow(row);
 }
-function handleEdit() {
-  console.log(123)
+function handleEdit(row: any) {
+  const roleIds = row?.id || ids.value?.join(',');
+  proxy?.$modal
+    // .confirm('是否确认删除"' + roleIds + '"的数据项？')
+    .confirm('是否确认修订选数据项？')
+    .then(function () {
+      return upMatVersion(roleIds);
+    })
+    .then(() => {
+      getList();
+      proxy?.$modal.msgSuccess("修订成功");
+    })
+    .catch(() => { });
 }
 
 //文件处理 
+const contentFile = ref<any>();
 const fileList = ref<any[]>([]);
+const fileListArr = ref<any[]>([]);
 // 上传事件
 function handleUploadChange(e: any) {
-  console.log(e)
-  rulesForm.value.matrixContents = e
+  contentFile.value = e.raw;
 }
 function handleUploadRemove(e: any) {
-  rulesForm.value.matrixContents = undefined;
+  contentFile.value = undefined;
 }
-function handleUploadChange1(e: never) {
+const handleUpload = async () => {
+  // return 
+  const contentRes = await uploadFetch(contentFile.value)
+  rulesForm.value.matrixContents = contentRes;
+  if (fileList.value.length) {
+    const listRes = await handleUpload1();
+    rulesForm.value.matrixAttachments = JSON.stringify(listRes);
+    rulesForm.value.matrixType = '变更矩阵';
+    addMatrix(rulesForm.value).then((response: any) => {
+      console.log(rulesForm);
+      proxy?.$modal.msgSuccess("新增成功");
+      open.value = false;
+      getList();
+    });
+  } else {
+    rulesForm.value.matrixType = '变更矩阵';
+    addMatrix(rulesForm.value).then((response: any) => {
+      console.log(rulesForm);
+      proxy?.$modal.msgSuccess("新增成功");
+      open.value = false;
+      getList();
+    });
+  }
+}
+const handleUpload1 = async () => {
+  let arr = []
+  for (let i = 0; i < fileList.value.length; i++) {
+    const request = await uploadFetch(fileList.value[i])
+    arr.push(request);
+  }
+  return arr
+}
+const uploadFetch = async (file: any) => {
+  try {
+    const formdata = new FormData();
+    formdata.append('file', file)
+    const response: any = await matUpload(formdata)
+    return response.msg
+  } catch (error) {
+    // 处理错误
+    console.error(error);
+  }
+}
+function handleUploadChange1(e: any) {
   console.log(e)
-  rulesForm.value.matrixAttachments.push(e)
+  fileList.value.push(e.raw)
 }
 function handleUploadRemove1(e: any) {
   console.log(e)
-  let index = rulesForm.value.matrixAttachments.indexOf(e);
+  let index = fileList.value.indexOf(e);
   if (index >= 0) {
-    rulesForm.value.matrixAttachments.splice(index, 1);
+    fileList.value.splice(index, 1);
   }
-  console.log(rulesForm.value.matrixAttachments)
+  console.log(fileList.value)
 }
-
 /** 提交按钮 */
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
@@ -496,23 +618,22 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         getList();
       });
     } else {
-      rulesForm.value.matrixType = '变更矩阵'
-      addMatrix(rulesForm.value).then((response: any) => {
-        console.log(rulesForm);
-        proxy?.$modal.msgSuccess("新增成功");
-        open.value = false;
-        getList();
-      });
+      if (contentFile.value) {
+        handleUpload();
+      } else {
+        proxy?.$modal.msgWarning("主内容未上传文件！");
+      }
     }
   });
 }
 /** 删除按钮操作 */
 function handleDelete(row: any) {
-  const roleIds = row.id || ids.value;
+  const roleIds = row?.id || ids.value?.join(',');
   proxy?.$modal
-    .confirm('是否确认删除角色编号为"' + roleIds + '"的数据项？')
+    // .confirm('是否确认删除"' + roleIds + '"的数据项？')
+    .confirm('是否确认删除所选数据项？')
     .then(function () {
-      return delRole(roleIds);
+      return delMatrix(roleIds);
     })
     .then(() => {
       getList();
