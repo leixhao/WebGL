@@ -16,12 +16,12 @@
             <span>{{ item.fileName }}</span>
             <div class="icon-list">
               <el-tooltip content="查阅" placement="bottom" effect="dark">
-                <el-icon>
+                <el-icon @click="handleLook(item)">
                   <View />
                 </el-icon>
               </el-tooltip>
               <el-tooltip content="下载" placement="bottom" effect="dark">
-                <el-icon>
+                <el-icon @click="handleDown(item)">
                   <Download />
                 </el-icon>
               </el-tooltip>
@@ -44,11 +44,20 @@
 </template>
 <script lang="ts" setup>
 import UploadFile from "./Upload-File.vue";
-import { deleteMatrixAttach, deleteMatrixContent } from "@/api/template/matrix";
+import { deleteMatrixAttach, deleteMatrixContent, downloadFile } from "@/api/template/matrix";
 import { ref, getCurrentInstance, ComponentInternalInstance } from "vue";
-const { proxy } = getCurrentInstance() as ComponentInternalInstance;
+const { proxy }: any = getCurrentInstance() as ComponentInternalInstance;
 const list = ref();
 const show = ref(false);
+console.log(proxy?.TOOLS)
+function handleLook(file: any) {
+  console.log(file)
+  // return
+  proxy?.TOOLS.reviewByUrl(file.url);
+}
+function handleDown(file: any) {
+  window.open(file.url);
+}
 function handleUpload(row: object, item: any) {
   console.log(row);
   show.value = true;

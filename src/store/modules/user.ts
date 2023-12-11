@@ -8,11 +8,13 @@ const useUserStore = defineStore('user', {
     state: (): {
         token?: string;
         name: string;
+        nameT: string;
         avatar: string;
         roles: any[];
         permissions: string[];
     } => ({
         token: getToken(),
+        nameT: '',
         name: '',
         avatar: '',
         roles: [],
@@ -78,6 +80,7 @@ const useUserStore = defineStore('user', {
                             this.roles = ['ROLE_DEFAULT'];
                         }
                         this.name = user.userName;
+                        this.nameT = user.nickName;
                         this.avatar = avatar;
                         resolve(res);
                     })

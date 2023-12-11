@@ -35,6 +35,15 @@ export function upMatVersion(ids: any) {
     })
 }
 
+// 更新附件
+export function upMatAttFile(data: any) {
+    return request({
+        url: PRE + '/matrix/uploadAttachFile',
+        method: 'post',
+        data
+    })
+}
+
 // 更新状态
 export function upMatStatus(params: { id: string | number, matrixStatus: string | number }) {
     return request({
@@ -109,5 +118,16 @@ export function updateStatus(data: any) {
     return request({
         url: `/ecm/matrix/updateStatus/${data.matrixId}`,
         method: 'get',
+    })
+}
+
+// 下载
+export function downloadFile(url: string) {
+    return request({
+        url: PRE + 'matrix/downloadFile',
+        method: 'get',
+        params: {
+            uniqueName: url
+        }
     })
 }

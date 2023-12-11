@@ -60,6 +60,11 @@ import TreeSelect from '@/components/TreeSelect/index.vue';
 // 字典标签组件
 import DictTag from '@/components/DictTag/index.vue';
 import Moment from 'moment';
+
+
+// 公共方法
+import TOOLS from "@/utils/tool"
+
 const app = createApp(App);
 // const { t } = i18n.global;
 
@@ -74,6 +79,7 @@ app.config.globalProperties.addDateRange = addDateRange;
 app.config.globalProperties.selectDictLabel = selectDictLabel;
 app.config.globalProperties.selectDictLabels = selectDictLabels;
 app.config.globalProperties.moment = Moment;
+app.config.globalProperties.TOOLS = TOOLS;
 
 // 全局组件挂载
 app.component('DictTag', DictTag);

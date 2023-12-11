@@ -20,8 +20,7 @@
           </el-form>
         </el-col>
         <left-toolbar v-model:showSearch="showSearch" v-model:show-new-data="showNewData" :show-toogle="true"
-          :delDis="multiple" :statusDis="single"
-          :editDis="multiple == true && showNewData == true"
+          :delDis="multiple" :statusDis="single" :editDis="multiple && showNewData || !showNewData"
           v-model:toogle="toogle" @docAdd="handleAdd" @docDelete="handleDelete" @docEdit="handleEdit"
           @docStatus="handleStatus" @queryTable="getList"></left-toolbar>
         <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
@@ -178,7 +177,7 @@
                   style="color: red;display: inline-block;margin-right: 5px;">*</span>主内容</span>
             </template>
             <el-upload class="upload-demo" drag :action="APLOAD_RUL" multiple method="post" :auto-upload="false"
-              :accept="'.xlsx'" :limit="1" @change="handleUploadChange" @remove="handleUploadRemove">
+              :accept="'.xlsx'" :file-list="fileList1" :limit="1" @change="handleUploadChange" @remove="handleUploadRemove">
               <el-icon class="el-icon--upload"><upload-filled /></el-icon>
               <div class="el-upload__text">
                 将文件拖到此处，或者<em>点击上传</em>
@@ -195,7 +194,7 @@
             <template #label>
               <span style="font-weight: 600;">附件</span>
             </template>
-            <el-upload class="upload-demo" drag :action="APLOAD_RUL" multiple method="post" :auto-upload="false"
+            <el-upload class="upload-demo" :file-list="fileList2" drag :action="APLOAD_RUL" multiple method="post" :auto-upload="false"
               @change="handleUploadChange1" @remove="handleUploadRemove1">
               <el-icon class="el-icon--upload"><upload-filled /></el-icon>
               <div class="el-upload__text">
@@ -467,7 +466,7 @@ watch(
 )
 watch(
   showNewData, (newVal, oldVal) => {
-    multiple.value = false;
+    multiple.value = true;
     queryParams.value.matrixRevision = newVal ? '1' : '';
     getList();
   }
@@ -520,6 +519,10 @@ function cancel() {
 // 表单重置
 function reset() {
   isLight.value = false;
+  contentFile.value = '';
+  fileList.value = [];
+  fileList1.value = [];
+  fileList2.value = [];
   rulesForm.value = {
     id: undefined,
     matrixType: '',
@@ -592,6 +595,8 @@ function handleEdit(row: any) {
 //文件处理 
 const contentFile = ref<any>();
 const fileList = ref<any[]>([]);
+const fileList1 = ref<any[]>([]);
+const fileList2 = ref<any[]>([]);
 const fileListArr = ref<any[]>([]);
 // 上传事件
 function handleUploadChange(e: any) {
@@ -606,14 +611,15 @@ const handleUpload = async () => {
   rulesForm.value.matrixContents = contentRes;
   if (fileList.value.length) {
     const listRes = await handleUpload1();
+    console.log(listRes)
     rulesForm.value.matrixAttachments = JSON.stringify(listRes);
     rulesForm.value.matrixType = '变更矩阵';
     addMatrix(rulesForm.value).then((response: any) => {
       console.log(rulesForm);
       proxy?.$modal.msgSuccess("新增成功");
       open.value = false;
-      getList();
       reset();
+      getList();
     });
   } else {
     rulesForm.value.matrixType = '变更矩阵';
@@ -621,8 +627,8 @@ const handleUpload = async () => {
       console.log(rulesForm);
       proxy?.$modal.msgSuccess("新增成功");
       open.value = false;
-      getList();
       reset();
+      getList();
     });
   }
 }
