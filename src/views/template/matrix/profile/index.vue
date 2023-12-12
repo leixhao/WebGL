@@ -169,7 +169,6 @@ const Info = ref({
   createByName: undefined,
   createTime: undefined
 });
-const name = ref()
 const form = ref();
 const AssociatedRefs = ref();
 const stepRefs = ref();
@@ -195,7 +194,6 @@ function getList() {
   getMatrixDetail({
     matrixId: Row.value?.id,
   }).then((res) => {
-    name.value = res.data.matrixName;
     Info.value = JSON.parse(JSON.stringify(res.data));
     form.value?.init(res.data);
     AssociatedRefs.value?.init({

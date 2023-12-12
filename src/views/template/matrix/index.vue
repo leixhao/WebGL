@@ -119,11 +119,11 @@
         </el-table-column>
         <el-table-column :label="t('table.creator')" prop="createByName" :show-overflow-tooltip="true" min-width="120" />
         <el-table-column :label="t('table.creatime')" prop="createTime" :sortable="toogle ? false : true"
-          :show-overflow-tooltip="true" min-width="100" />
+          :show-overflow-tooltip="true" min-width="140" />
         <el-table-column :label="t('table.modifiedBy')" prop="updateByName" :show-overflow-tooltip="true"
           min-width="120" />
         <el-table-column :label="t('table.modifiedTime')" prop="updateTime" :show-overflow-tooltip="true"
-          min-width="120" />
+          min-width="140" />
         <el-table-column :label="t('table.remarks')" prop="matrixRemarks" :show-overflow-tooltip="true" min-width="100" />
         <el-table-column :label="t('table.action')" min-width="270" fixed="right" align="center" class="qw"
           class-name="small-padding fixed-width">
@@ -154,7 +154,7 @@
     <div class="container-right">
       <profile ref="profileRef"></profile>
     </div>
-    <!-- 添加或修改角色配置对话框 -->
+    <!-- 添加对话框 -->
     <el-dialog :title="title" v-model="open" append-to-body>
       <div class="demo-drawer__content">
         <el-form class="m20" ref="ruleFormRef" :model="rulesForm" :rules="rules" label-width="120px">

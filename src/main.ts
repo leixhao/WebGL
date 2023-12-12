@@ -32,7 +32,6 @@ import './permission'; // permission control
 
 import { useDict } from '@/utils/dict';
 import i18n from '@/lang'
-import { useI18n } from 'vue-i18n'
 import {
     parseTime,
     resetForm,
@@ -66,7 +65,6 @@ import Moment from 'moment';
 import TOOLS from "@/utils/tool"
 
 const app = createApp(App);
-// const { t } = i18n.global;
 
 // 全局方法挂载
 // app.config.globalProperties.$t = t;
