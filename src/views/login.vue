@@ -4,9 +4,9 @@
       <h3 class="title">
         {{ t("login.title") }}
 
-        <el-tooltip content="语言选择" effect="dark" placement="bottom">
+        <!-- <el-tooltip content="语言选择" effect="dark" placement="bottom">
           <lang-select class="right-menu-item hover-effect" />
-        </el-tooltip>
+        </el-tooltip> -->
       </h3>
       <div>
         <!-- 账号密码登录 -->

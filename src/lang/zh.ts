@@ -50,7 +50,7 @@ export default {
         createdTime: '创建时间'
     },
     login: {
-        title: 'AESC BASE',
+        title: 'ECM',
         logIn: '登录',
         username: '账号',
         password: '密码',

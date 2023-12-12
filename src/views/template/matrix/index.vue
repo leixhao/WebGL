@@ -125,7 +125,7 @@
         <el-table-column :label="t('table.modifiedTime')" prop="updateTime" :show-overflow-tooltip="true"
           min-width="120" />
         <el-table-column :label="t('table.remarks')" prop="matrixRemarks" :show-overflow-tooltip="true" min-width="100" />
-        <el-table-column :label="t('table.action')" min-width="250" fixed="right" align="center" class="qw"
+        <el-table-column :label="t('table.action')" min-width="270" fixed="right" align="center" class="qw"
           class-name="small-padding fixed-width">
           <template #default="scope" v-if="!toogle">
             <el-button size="small" link type="primary" @click="handleUpdate(scope.row)">

@@ -109,23 +109,24 @@
           </el-tab-pane>
           <el-tab-pane label="历史记录" name="fifth">
             <div class="left-button">
-              <el-tooltip content="上传" placement="bottom" effect="dark">
+              <!-- <el-tooltip content="上传" placement="bottom" effect="dark">
                 <el-button @click="handleUpload(2)" type="primary" plain circle icon="DocumentAdd" />
-              </el-tooltip>
+              </el-tooltip> -->
             </div>
             <div class="table-container">
               <el-table :data="fifthTable" border style="width: 100%">
-                <el-table-column prop="code" show-overflow-tooltip align="center" label="编号">
-                </el-table-column>
-                <el-table-column prop="name" show-overflow-tooltip align="center" label="名称" />
-                <el-table-column prop="current" show-overflow-tooltip align="center" label="版本" />
-                <el-table-column prop="name" show-overflow-tooltip align="center" label="状态" />
-                <el-table-column prop="name" show-overflow-tooltip align="center" label="所有者" />
+                <!-- <el-table-column prop="code" show-overflow-tooltip align="center" label="编号">
+                </el-table-column> -->
+                <!-- <el-table-column prop="name" show-overflow-tooltip align="center" label="名称" /> -->
+                <el-table-column prop="current" show-overflow-tooltip align="center" label="新版本" />
+                <el-table-column prop="old" show-overflow-tooltip align="center" label="旧版本" />
+                <!-- <el-table-column prop="name" show-overflow-tooltip align="center" label="状态" />
+                <el-table-column prop="name" show-overflow-tooltip align="center" label="所有者" /> -->
                 <el-table-column prop="createByName" show-overflow-tooltip align="center" label="创建者" />
                 <el-table-column prop="createTime" show-overflow-tooltip align="center" width="180" label="创建时间" />
-                <el-table-column prop="name" show-overflow-tooltip align="center" label="修改者" />
+                <!-- <el-table-column prop="name" show-overflow-tooltip align="center" label="修改者" />
                 <el-table-column prop="name" show-overflow-tooltip align="center" width="180" label="修改时间" />
-                <el-table-column prop="name" show-overflow-tooltip align="center" width="200" label="备注" />
+                <el-table-column prop="name" show-overflow-tooltip align="center" width="200" label="备注" /> -->
               </el-table>
               <!-- <div class="page-container">
                 <el-pagination
@@ -168,6 +169,7 @@ const Info = ref({
   createByName: undefined,
   createTime: undefined
 });
+const name = ref()
 const form = ref();
 const AssociatedRefs = ref();
 const stepRefs = ref();
@@ -193,8 +195,9 @@ function getList() {
   getMatrixDetail({
     matrixId: Row.value?.id,
   }).then((res) => {
-    Info.value = res.data;
-    form.value?.init(Info.value);
+    name.value = res.data.matrixName;
+    Info.value = JSON.parse(JSON.stringify(res.data));
+    form.value?.init(res.data);
     AssociatedRefs.value?.init({
       id: Info.value?.id,
       matrixContents: Info.value?.matrixContents,
@@ -205,9 +208,11 @@ function getList() {
 }
 const fifthTable = ref([]);
 function getUpVersionLogList() {
+  console.log(Row.value)
   getUpVersionLog({
-    id: Row.value?.id,
+    id: Row.value?.parentId,
   }).then((res) => {
+    console.log(res)
     fifthTable.value = res!.rows;
   });
 }

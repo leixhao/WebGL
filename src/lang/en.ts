@@ -47,7 +47,7 @@ export default {
         createdTime: 'Created Time'
     },
     login: {
-        title: 'AESC BASE',
+        title: 'ECM',
         logIn: 'Log in',
         username: 'Username',
         password: 'Password',

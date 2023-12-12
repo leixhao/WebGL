@@ -8,7 +8,7 @@
                   color: rgb(255, 255, 255);
                   text-align: center;
                   font-size: 20px;">
-        AESC
+        ECM
       </div>
     </el-tooltip>
     <!-- <el-dropdown trigger="click" class="international" @command="handleSelect">
